@@ -38,9 +38,11 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
             <input
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
+                onChange={(e) => setInputValue(e.target.value)}
                 onBlur={commit}
-                onKeyDown={e => { if (e.key === 'Enter') commit(); }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') commit();
+                }}
             />
         </div>
     );

@@ -39,7 +39,9 @@ describe('Basic functionality', () => {
         reactTesting.fireEvent.blur(nameInput);
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
-        await reactTesting.act(async () => { vi.runAllTimers(); });
+        await reactTesting.act(async () => {
+            vi.runAllTimers();
+        });
         expect(onNameChange).toHaveBeenCalledTimes(1);
         expect(onNameChange).toHaveBeenCalledWith(id, 'My Counter');
         onNameChange.mockClear();
@@ -49,11 +51,12 @@ describe('Basic functionality', () => {
         reactTesting.fireEvent.blur(nameInput);
 
         expect(reactTesting.screen.getByText('NamedByEnterKey')).toBeInTheDocument();
-        await reactTesting.act(async () => { vi.runAllTimers(); });
+        await reactTesting.act(async () => {
+            vi.runAllTimers();
+        });
         expect(onNameChange).toHaveBeenCalledTimes(1);
         expect(onNameChange).toHaveBeenCalledWith(id, 'NamedByEnterKey');
     });
-
 });
 
 describe('Counter debouncing', () => {
