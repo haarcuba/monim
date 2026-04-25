@@ -18,5 +18,12 @@ describe('Counter', () => {
         reactTesting.fireEvent.blur(nameInput);
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
+
+        reactTesting.fireEvent.change(nameInput, { target: { value: 'NamedByEnterKey' } });
+        reactTesting.fireEvent.keyDown(nameInput, { key: 'Enter' });
+
+        expect(reactTesting.screen.getByText('NamedByEnterKey')).toBeInTheDocument();
+
     });
+
 });
