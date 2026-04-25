@@ -1,0 +1,13 @@
+name: BasicSetup
+description: basic setup
+
+runs:
+    using: composite
+    steps:
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+              node-version: '24.x'
+        - name: Install Project
+          run: npm install
+          shell: bash
