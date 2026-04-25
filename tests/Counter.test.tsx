@@ -59,6 +59,25 @@ describe('Basic functionality', () => {
     });
 });
 
+describe('Counter value', () => {
+    it('starts at 0', () => {
+        reactTesting.render(<Counter.Counter />);
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
+    });
+
+    it('inc increments counter', () => {
+        reactTesting.render(<Counter.Counter />);
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('inc'));
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('1');
+    });
+
+    it('dec decrements counter', () => {
+        reactTesting.render(<Counter.Counter />);
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('-1');
+    });
+});
+
 describe('Counter debouncing', () => {
     beforeEach(() => {
         vi.useFakeTimers();

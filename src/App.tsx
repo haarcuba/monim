@@ -10,6 +10,7 @@ function App() {
         <>
             <section id="center">
                 <Counter.Counter onNameChange={onNameChange} />
+                <Counter.Counter onNameChange={onNameChange} />
             </section>
         </>
     );
