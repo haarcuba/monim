@@ -1,21 +1,21 @@
 name: LintAndFormat
 
 on:
-  push:
-  pull_request:
+    push:
+    pull_request:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/basic_setup
-      - name: Lint
-        run: npm run lint
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/basic_setup
-      - name: Format
-        run: npm run format:check
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ./.github/actions/basic_setup
+            - name: Lint
+              run: npm run lint
+    format:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ./.github/actions/basic_setup
+            - name: Format
+              run: npm run format:check
