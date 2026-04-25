@@ -13,6 +13,11 @@ export function Counter({ onNameChange }: Props) {
         onNameChange?.(id.current, name);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+    function nameChanged(newName: string) {
+        setEditing(false);
+        onNameChange?.(id.current, newName);
+    }
+
     return (
         <div>
             {!editing && <span onClick={() => setEditing(true)}>{name}</span>}
@@ -20,8 +25,8 @@ export function Counter({ onNameChange }: Props) {
                 style={{ display: editing ? undefined : 'none' }}
                 value={name}
                 onChange={e => setName(e.target.value)}
-                onBlur={() => { setEditing(false); onNameChange?.(id.current, name); }}
-                onKeyDown={e => { if (e.key === 'Enter') { setEditing(false); onNameChange?.(id.current, name); } }}
+                onBlur={() => { nameChanged(name); }}
+                onKeyDown={e => { if (e.key === 'Enter') { nameChanged(name) } }}
             />
         </div>
     );
