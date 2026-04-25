@@ -3,9 +3,10 @@ import { useDebouncedCallback } from 'use-debounce';
 
 interface Props {
     onNameChange?: (id: string, name: string) => void;
+    debounceMS?: number;
 }
 
-export function Counter({ onNameChange }: Props) {
+export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     const id = React.useRef(crypto.randomUUID());
     const [name, setName] = React.useState('untitled');
     const [inputValue, setInputValue] = React.useState('untitled');
@@ -14,7 +15,7 @@ export function Counter({ onNameChange }: Props) {
 
     const debouncedOnNameChange = useDebouncedCallback(
         (newName: string) => onNameChange?.(id.current, newName),
-        300
+        debounceMS
     );
 
     React.useEffect(() => {
