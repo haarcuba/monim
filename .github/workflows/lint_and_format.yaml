@@ -1,7 +1,6 @@
 name: LintAndFormat
 
 on:
-    push:
     pull_request:
 
 jobs:
