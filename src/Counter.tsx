@@ -7,15 +7,16 @@ interface Props {
 export function Counter({ onNameChange }: Props) {
     const id = React.useRef(crypto.randomUUID());
     const [name, setName] = React.useState('untitled');
+    const [inputValue, setInputValue] = React.useState('untitled');
     const [editing, setEditing] = React.useState(false);
 
     React.useEffect(() => {
         onNameChange?.(id.current, name);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [name]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    function nameChanged(newName: string) {
+    function commit() {
+        setName(inputValue);
         setEditing(false);
-        onNameChange?.(id.current, newName);
     }
 
     return (
@@ -23,10 +24,10 @@ export function Counter({ onNameChange }: Props) {
             {!editing && <span onClick={() => setEditing(true)}>{name}</span>}
             <input
                 style={{ display: editing ? undefined : 'none' }}
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onBlur={() => { nameChanged(name); }}
-                onKeyDown={e => { if (e.key === 'Enter') { nameChanged(name) } }}
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                onBlur={commit}
+                onKeyDown={e => { if (e.key === 'Enter') commit(); }}
             />
         </div>
     );
