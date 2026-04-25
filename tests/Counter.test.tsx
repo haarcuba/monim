@@ -4,7 +4,15 @@ import * as Counter from '../src/Counter';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-describe('Counter', () => {
+describe('Basic functionality', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     it('initial state', () => {
         const onNameChange = vi.fn<(id: string, name: string) => void>();
         reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
@@ -13,7 +21,7 @@ describe('Counter', () => {
         expect(onNameChange).toHaveBeenCalledTimes(1);
     });
 
-    it('modify-name', () => {
+    it('modify-name', async () => {
         const onNameChange = vi.fn<(id: string, name: string) => void>();
         reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
 
@@ -31,6 +39,7 @@ describe('Counter', () => {
         reactTesting.fireEvent.blur(nameInput);
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
+        await reactTesting.act(async () => { vi.runAllTimers(); });
         expect(onNameChange).toHaveBeenCalledTimes(1);
         expect(onNameChange).toHaveBeenCalledWith(id, 'My Counter');
         onNameChange.mockClear();
@@ -40,8 +49,45 @@ describe('Counter', () => {
         reactTesting.fireEvent.blur(nameInput);
 
         expect(reactTesting.screen.getByText('NamedByEnterKey')).toBeInTheDocument();
+        await reactTesting.act(async () => { vi.runAllTimers(); });
         expect(onNameChange).toHaveBeenCalledTimes(1);
         expect(onNameChange).toHaveBeenCalledWith(id, 'NamedByEnterKey');
     });
 
+});
+
+describe('Counter debouncing', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('debounce-name-change', async () => {
+        const onNameChange = vi.fn<(id: string, name: string) => void>();
+        reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
+
+        const id = onNameChange.mock.calls[0][0];
+        onNameChange.mockClear();
+
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('untitled'));
+        const nameInput = reactTesting.screen.getByRole('textbox');
+
+        reactTesting.fireEvent.change(nameInput, { target: { value: 'First Name' } });
+        reactTesting.fireEvent.blur(nameInput);
+
+        reactTesting.fireEvent.change(nameInput, { target: { value: 'Second Name' } });
+        reactTesting.fireEvent.keyDown(nameInput, { key: 'Enter' });
+
+        expect(onNameChange).not.toHaveBeenCalled();
+
+        await reactTesting.act(async () => {
+            vi.runAllTimers();
+        });
+
+        expect(onNameChange).toHaveBeenCalledTimes(1);
+        expect(onNameChange).toHaveBeenCalledWith(id, 'Second Name');
+    });
 });

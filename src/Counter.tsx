@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 interface Props {
     onNameChange?: (id: string, name: string) => void;
@@ -9,9 +10,20 @@ export function Counter({ onNameChange }: Props) {
     const [name, setName] = React.useState('untitled');
     const [inputValue, setInputValue] = React.useState('untitled');
     const [editing, setEditing] = React.useState(false);
+    const firstRender = React.useRef(true);
+
+    const debouncedOnNameChange = useDebouncedCallback(
+        (newName: string) => onNameChange?.(id.current, newName),
+        300
+    );
 
     React.useEffect(() => {
-        onNameChange?.(id.current, name);
+        if (firstRender.current) {
+            firstRender.current = false;
+            onNameChange?.(id.current, name);
+            return;
+        }
+        debouncedOnNameChange(name);
     }, [name]); // eslint-disable-line react-hooks/exhaustive-deps
 
     function commit() {
