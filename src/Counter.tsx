@@ -6,16 +6,14 @@ export function Counter() {
 
     return (
         <div>
-            {editing ? (
-                <input
-                    autoFocus
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    onBlur={() => setEditing(false)}
-                />
-            ) : (
-                <span onClick={() => setEditing(true)}>{name}</span>
-            )}
+            {!editing && <span onClick={() => setEditing(true)}>{name}</span>}
+            <input
+                style={{ display: editing ? undefined : 'none' }}
+                value={name}
+                onChange={e => setName(e.target.value)}
+                onBlur={() => setEditing(false)}
+                onKeyDown={e => { if (e.key === 'Enter') setEditing(false); }}
+            />
         </div>
     );
 }
