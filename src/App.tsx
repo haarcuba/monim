@@ -1,9 +1,12 @@
 import './App.css';
+import * as Counter from './Counter';
 
 function App() {
     return (
         <>
-            <section id="center">App goes here</section>
+            <section id="center">
+                <Counter.Counter />
+            </section>
         </>
     );
 }
