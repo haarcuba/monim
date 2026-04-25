@@ -36,9 +36,9 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     return (
         <div>
             {!editing && <div onClick={() => setEditing(true)}>{name}</div>}
-            <button onClick={() => setCount(c => c - 1)}>dec</button>
+            <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
-            <button onClick={() => setCount(c => c + 1)}>inc</button>
+            <button onClick={() => setCount((c) => c + 1)}>inc</button>
             <input
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
