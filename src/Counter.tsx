@@ -20,8 +20,8 @@ export function Counter({ onNameChange }: Props) {
                 style={{ display: editing ? undefined : 'none' }}
                 value={name}
                 onChange={e => setName(e.target.value)}
-                onBlur={() => setEditing(false)}
-                onKeyDown={e => { if (e.key === 'Enter') setEditing(false); }}
+                onBlur={() => { setEditing(false); onNameChange?.(id.current, name); }}
+                onKeyDown={e => { if (e.key === 'Enter') { setEditing(false); onNameChange?.(id.current, name); } }}
             />
         </div>
     );
