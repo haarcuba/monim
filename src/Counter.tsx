@@ -11,6 +11,7 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     const [name, setName] = React.useState('untitled');
     const [inputValue, setInputValue] = React.useState('untitled');
     const [editing, setEditing] = React.useState(false);
+    const [count, setCount] = React.useState(0);
     const firstRender = React.useRef(true);
 
     const debouncedOnNameChange = useDebouncedCallback(
@@ -34,7 +35,10 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
 
     return (
         <div>
-            {!editing && <span onClick={() => setEditing(true)}>{name}</span>}
+            {!editing && <div onClick={() => setEditing(true)}>{name}</div>}
+            <button onClick={() => setCount((c) => c - 1)}>dec</button>
+            <div data-testid="counter">{count}</div>
+            <button onClick={() => setCount((c) => c + 1)}>inc</button>
             <input
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
