@@ -41,16 +41,29 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
             <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
             <button onClick={() => setCount((c) => c + 1)}>inc</button>
-            <button onClick={() => { setSetCountInput(''); setEditingArbitrary(true); }}>set</button>
+            <button
+                onClick={() => {
+                    setSetCountInput('');
+                    setEditingArbitrary(true);
+                }}
+            >
+                set
+            </button>
             {editingArbitrary && (
                 <input
                     data-testid="set-input"
                     type="number"
                     value={setCountInput}
                     onChange={(e) => setSetCountInput(e.target.value)}
-                    onBlur={() => { setCount(Number(setCountInput)); setEditingArbitrary(false); }}
+                    onBlur={() => {
+                        setCount(Number(setCountInput));
+                        setEditingArbitrary(false);
+                    }}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter') { setCount(Number(setCountInput)); setEditingArbitrary(false); }
+                        if (e.key === 'Enter') {
+                            setCount(Number(setCountInput));
+                            setEditingArbitrary(false);
+                        }
                     }}
                 />
             )}
