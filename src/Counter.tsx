@@ -34,7 +34,7 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
             <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
             <button onClick={() => setCount((c) => c + 1)}>inc</button>
-            <SetButton onSet={setCount} parse={Number} />
+            <SetButton onSet={setCount} parse={Number} value={count} />
         </div>
     );
 }

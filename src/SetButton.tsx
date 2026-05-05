@@ -3,9 +3,10 @@ import React from 'react';
 interface Props<T> {
     onSet: (value: T) => void;
     parse: (input: string) => T;
+    value: T;
 }
 
-export function SetButton<T>({ onSet, parse }: Props<T>) {
+export function SetButton<T>({ onSet, parse, value }: Props<T>) {
     const [active, setActive] = React.useState(false);
     const [input, setInput] = React.useState('');
 
@@ -18,7 +19,7 @@ export function SetButton<T>({ onSet, parse }: Props<T>) {
         <>
             <button
                 onClick={() => {
-                    setInput('');
+                    setInput(String(value));
                     setActive(true);
                 }}
             >
