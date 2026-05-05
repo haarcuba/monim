@@ -76,6 +76,20 @@ describe('Counter value', () => {
         reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('-1');
     });
+
+    it('set allows setting an arbitrary value', () => {
+        reactTesting.render(<Counter.Counter />);
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
+
+        const value = Math.floor(Math.random() * 100) + 1;
+
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('set'));
+        const setInput = reactTesting.screen.getByTestId('set-input');
+        reactTesting.fireEvent.change(setInput, { target: { value: String(value) } });
+        reactTesting.fireEvent.keyDown(setInput, { key: 'Enter' });
+
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(value));
+    });
 });
 
 describe('Counter debouncing', () => {
@@ -113,4 +127,3 @@ describe('Counter debouncing', () => {
         expect(onNameChange).toHaveBeenCalledWith(id, 'Second Name');
     });
 });
-///dummy commit
