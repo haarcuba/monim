@@ -12,6 +12,8 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     const [inputValue, setInputValue] = React.useState('untitled');
     const [editing, setEditing] = React.useState(false);
     const [count, setCount] = React.useState(0);
+    const [settingValue, setSettingValue] = React.useState(false);
+    const [setCountInput, setSetCountInput] = React.useState('');
     const firstRender = React.useRef(true);
 
     const debouncedOnNameChange = useDebouncedCallback(
@@ -39,6 +41,19 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
             <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
             <button onClick={() => setCount((c) => c + 1)}>inc</button>
+            <button onClick={() => { setSetCountInput(''); setSettingValue(true); }}>set</button>
+            {settingValue && (
+                <input
+                    data-testid="set-input"
+                    type="number"
+                    value={setCountInput}
+                    onChange={(e) => setSetCountInput(e.target.value)}
+                    onBlur={() => { setCount(Number(setCountInput)); setSettingValue(false); }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') { setCount(Number(setCountInput)); setSettingValue(false); }
+                    }}
+                />
+            )}
             <input
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
