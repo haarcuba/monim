@@ -1,5 +1,7 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { SetButton } from './SetButton';
+import { EditableName } from './EditableName';
 
 interface Props {
     onNameChange?: (id: string, name: string) => void;
@@ -9,8 +11,6 @@ interface Props {
 export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     const id = React.useRef(crypto.randomUUID());
     const [name, setName] = React.useState('untitled');
-    const [inputValue, setInputValue] = React.useState('untitled');
-    const [editing, setEditing] = React.useState(false);
     const [count, setCount] = React.useState(0);
     const firstRender = React.useRef(true);
 
@@ -28,26 +28,13 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
         debouncedOnNameChange(name);
     }, [name]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    function commit() {
-        setName(inputValue);
-        setEditing(false);
-    }
-
     return (
         <div>
-            {!editing && <div onClick={() => setEditing(true)}>{name}</div>}
+            <EditableName name={name} onChange={setName} />
             <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
             <button onClick={() => setCount((c) => c + 1)}>inc</button>
-            <input
-                style={{ display: editing ? undefined : 'none' }}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onBlur={commit}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') commit();
-                }}
-            />
+            <SetButton onSet={setCount} parse={Number} value={count} />
         </div>
     );
 }
