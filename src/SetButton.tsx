@@ -16,14 +16,23 @@ export function SetButton<T>({ onSet, parse }: Props<T>) {
 
     return (
         <>
-            <button onClick={() => { setInput(''); setActive(true); }}>set</button>
+            <button
+                onClick={() => {
+                    setInput('');
+                    setActive(true);
+                }}
+            >
+                set
+            </button>
             {active && (
                 <input
                     data-testid="set-input"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onBlur={commit}
-                    onKeyDown={(e) => { if (e.key === 'Enter') commit(); }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') commit();
+                    }}
                 />
             )}
         </>
