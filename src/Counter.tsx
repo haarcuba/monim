@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { SetButton } from './SetButton';
 
 interface Props {
     onNameChange?: (id: string, name: string) => void;
@@ -12,8 +13,6 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
     const [inputValue, setInputValue] = React.useState('untitled');
     const [editing, setEditing] = React.useState(false);
     const [count, setCount] = React.useState(0);
-    const [editingArbitrary, setEditingArbitrary] = React.useState(false);
-    const [setCountInput, setSetCountInput] = React.useState('');
     const firstRender = React.useRef(true);
 
     const debouncedOnNameChange = useDebouncedCallback(
@@ -41,32 +40,7 @@ export function Counter({ onNameChange, debounceMS = 300 }: Props) {
             <button onClick={() => setCount((c) => c - 1)}>dec</button>
             <div data-testid="counter">{count}</div>
             <button onClick={() => setCount((c) => c + 1)}>inc</button>
-            <button
-                onClick={() => {
-                    setSetCountInput('');
-                    setEditingArbitrary(true);
-                }}
-            >
-                set
-            </button>
-            {editingArbitrary && (
-                <input
-                    data-testid="set-input"
-                    type="number"
-                    value={setCountInput}
-                    onChange={(e) => setSetCountInput(e.target.value)}
-                    onBlur={() => {
-                        setCount(Number(setCountInput));
-                        setEditingArbitrary(false);
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            setCount(Number(setCountInput));
-                            setEditingArbitrary(false);
-                        }
-                    }}
-                />
-            )}
+            <SetButton onSet={setCount} parse={Number} />
             <input
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
