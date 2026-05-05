@@ -85,6 +85,7 @@ describe('Counter value', () => {
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('set'));
         let setInput = reactTesting.screen.getByTestId('set-input');
+        expect(setInput).toHaveValue('0');
         reactTesting.fireEvent.change(setInput, { target: { value: String(value) } });
         reactTesting.fireEvent.keyDown(setInput, { key: 'Enter' });
 
@@ -93,6 +94,7 @@ describe('Counter value', () => {
         const anotherValue = Math.floor(Math.random() * 100) + 1000;
         reactTesting.fireEvent.click(reactTesting.screen.getByText('set'));
         setInput = reactTesting.screen.getByTestId('set-input');
+        expect(setInput).toHaveValue(String(value));
         reactTesting.fireEvent.change(setInput, { target: { value: String(anotherValue) } });
         reactTesting.fireEvent.blur(setInput);
 
