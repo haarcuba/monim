@@ -18,6 +18,7 @@ export function SetButton<T>({ onSet, parse, value }: Props<T>) {
     return (
         <>
             <button
+                data-testid="set-button"
                 onClick={() => {
                     setInput(String(value));
                     setActive(true);

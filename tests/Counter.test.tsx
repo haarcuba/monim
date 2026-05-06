@@ -34,7 +34,7 @@ describe('Basic functionality', () => {
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('untitled'));
 
-        const nameInput = reactTesting.screen.getByRole('textbox');
+        const nameInput = reactTesting.screen.getByTestId('name-input');
         reactTesting.fireEvent.change(nameInput, { target: { value: 'My Counter' } });
         reactTesting.fireEvent.blur(nameInput);
 
@@ -83,7 +83,7 @@ describe('Counter value', () => {
 
         const value = Math.floor(Math.random() * 100) + 1;
 
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('set'));
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-button'));
         let setInput = reactTesting.screen.getByTestId('set-input');
         expect(setInput).toHaveValue('0');
         reactTesting.fireEvent.change(setInput, { target: { value: String(value) } });
@@ -92,7 +92,7 @@ describe('Counter value', () => {
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(value));
 
         const anotherValue = Math.floor(Math.random() * 100) + 1000;
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('set'));
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-button'));
         setInput = reactTesting.screen.getByTestId('set-input');
         expect(setInput).toHaveValue(String(value));
         reactTesting.fireEvent.change(setInput, { target: { value: String(anotherValue) } });
