@@ -18,6 +18,7 @@ export function EditableName({ name, onChange }: Props) {
         <>
             {!editing && <div onClick={() => setEditing(true)}>{name}</div>}
             <input
+                data-testid="name-input"
                 style={{ display: editing ? undefined : 'none' }}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
