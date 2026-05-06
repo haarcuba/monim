@@ -119,7 +119,7 @@ describe('Counter debouncing', () => {
         onNameChange.mockClear();
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('untitled'));
-        const nameInput = reactTesting.screen.getByRole('textbox');
+        const nameInput = reactTesting.screen.getByTestId('name-input');
 
         reactTesting.fireEvent.change(nameInput, { target: { value: 'First Name' } });
         reactTesting.fireEvent.blur(nameInput);
