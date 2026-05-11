@@ -9,6 +9,7 @@ export function UserAvatar({ user }: { user: User }) {
             src={user.photoURL ?? undefined}
             alt={user.displayName ?? 'User'}
             title={`Signed in as ${user.displayName ?? user.email}\nClick to sign out`}
+            referrerPolicy="no-referrer"
             onClick={signOut}
             style={{
                 position: 'fixed',
