@@ -61,7 +61,8 @@ export function SignInPage() {
                     whiteSpace: 'nowrap',
                 }}
                 onMouseOver={(e) =>
-                    (e.currentTarget.style.boxShadow = '0 1px 3px rgba(60,64,67,.2), 0 2px 6px rgba(60,64,67,.15)')
+                    (e.currentTarget.style.boxShadow =
+                        '0 1px 3px rgba(60,64,67,.2), 0 2px 6px rgba(60,64,67,.15)')
                 }
                 onMouseOut={(e) =>
                     (e.currentTarget.style.boxShadow = '0 1px 2px rgba(60,64,67,.08)')
