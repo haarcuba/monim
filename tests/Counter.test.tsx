@@ -13,12 +13,27 @@ describe('Basic functionality', () => {
         vi.useRealTimers();
     });
 
-    it('initial state', () => {
-        const onNameChange = vi.fn<(id: string, name: string) => void>();
-        reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
+    it('initial state', async () => {
+        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        reactTesting.render(<Counter.Counter id="test-id" name="" count={0} onChange={onChange} />);
 
-        expect(onNameChange).toHaveBeenCalledWith(expect.stringMatching(UUID_REGEX), 'untitled');
-        expect(onNameChange).toHaveBeenCalledTimes(1);
+        expect(reactTesting.screen.getByTestId('name-input')).toBeInTheDocument();
+        expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
+        expect(onChange).not.toHaveBeenCalled();
+
+        reactTesting.fireEvent.change(reactTesting.screen.getByTestId('name-input'), {
+            target: { value: 'My Counter' },
+        });
+        reactTesting.fireEvent.keyDown(reactTesting.screen.getByTestId('name-input'), {
+            key: 'Enter',
+        });
+        await reactTesting.act(async () => {
+            vi.runAllTimers();
+        });
+
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith({ name: 'My Counter' });
     });
 
     it('modify-name', async () => {
