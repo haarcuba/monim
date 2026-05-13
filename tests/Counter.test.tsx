@@ -7,11 +7,15 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 const confirmMethods = [
     {
         label: 'Enter key',
-        confirm: (input: HTMLElement) => { reactTesting.fireEvent.keyDown(input, { key: 'Enter' }) },
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.keyDown(input, { key: 'Enter' });
+        },
     },
     {
         label: 'blur',
-        confirm: (input: HTMLElement) => { reactTesting.fireEvent.blur(input) },
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.blur(input);
+        },
     },
 ];
 
@@ -23,7 +27,6 @@ describe('Basic functionality', () => {
     afterEach(() => {
         vi.useRealTimers();
     });
-
 
     it.each(confirmMethods)('initial state ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
