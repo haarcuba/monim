@@ -32,7 +32,7 @@ describe('Basic functionality', () => {
             <Counter.Counter id="mycounter-id" name="" count={0} onChange={onChange} />
         );
 
-        expect(reactTesting.screen.getByTestId('name-input')).toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('name-input')).toBeVisible();
         expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
         expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
         expect(onChange).not.toHaveBeenCalled();
@@ -46,6 +46,7 @@ describe('Basic functionality', () => {
 
         expect(onChange).toHaveBeenCalledOnce();
         expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter' });
+        expect(reactTesting.screen.queryByTestId('name-input')).not.toBeInTheDocument();
     });
 
     it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
