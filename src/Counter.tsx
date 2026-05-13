@@ -4,9 +4,9 @@ import { SetButton } from './SetButton';
 import { EditableName } from './EditableName';
 
 interface Props {
-    id?: string;
-    name?: string;
-    count?: number;
+    id: string;
+    name: string;
+    count: number;
     onChange?: (changes: { name?: string; count?: number }) => void;
     debounceMS?: number;
 }

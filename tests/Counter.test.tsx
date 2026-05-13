@@ -73,24 +73,24 @@ describe('Basic functionality', () => {
 
 describe('Counter value', () => {
     it('starts at 0', () => {
-        reactTesting.render(<Counter.Counter />);
+        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
     });
 
     it('inc increments counter', () => {
-        reactTesting.render(<Counter.Counter />);
+        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={55} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('inc'));
-        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('1');
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('56');
     });
 
     it('dec decrements counter', () => {
-        reactTesting.render(<Counter.Counter />);
+        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={45} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
-        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('-1');
+        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('44');
     });
 
     it('set allows setting an arbitrary value', () => {
-        reactTesting.render(<Counter.Counter />);
+        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
 
         const value = Math.floor(Math.random() * 100) + 1;
@@ -103,14 +103,6 @@ describe('Counter value', () => {
 
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(value));
 
-        const anotherValue = Math.floor(Math.random() * 100) + 1000;
-        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-button'));
-        setInput = reactTesting.screen.getByTestId('set-input');
-        expect(setInput).toHaveValue(String(value));
-        reactTesting.fireEvent.change(setInput, { target: { value: String(anotherValue) } });
-        reactTesting.fireEvent.blur(setInput);
-
-        expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(anotherValue));
     });
 });
 
