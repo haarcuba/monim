@@ -7,17 +7,23 @@ interface Props {
     id: string;
     name: string;
     count: number;
-    onChange?: (changes: { name?: string; count?: number }) => void;
+    onChange?: (changes: { id: string; name?: string; count?: number }) => void;
     debounceMS?: number;
 }
 
-export function Counter({ name: nameProp, count: countProp, onChange, debounceMS = 300 }: Props) {
+export function Counter({
+    id,
+    name: nameProp,
+    count: countProp,
+    onChange,
+    debounceMS = 300,
+}: Props) {
     const [name, setName] = React.useState(nameProp);
     const [count, setCount] = React.useState(countProp);
     const [named, setNamed] = React.useState(nameProp !== '');
 
     const debouncedOnChange = useDebouncedCallback(
-        (changes: { name?: string; count?: number }) => onChange?.(changes),
+        (changes: { name?: string; count?: number }) => onChange?.({ id, ...changes }),
         debounceMS
     );
 
