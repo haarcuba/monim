@@ -115,13 +115,11 @@ describe('Counter debouncing', () => {
     });
 
     it('debounce-name-change', async () => {
-        const onNameChange = vi.fn<(id: string, name: string) => void>();
-        reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
+        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        reactTesting.render(<Counter.Counter id="test-id" name="Zeroth Name" count={0} onChange={onChange} />);
 
-        const id = onNameChange.mock.calls[0][0];
-        onNameChange.mockClear();
 
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('untitled'));
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('Zeroth Name'));
         const nameInput = reactTesting.screen.getByTestId('name-input');
 
         reactTesting.fireEvent.change(nameInput, { target: { value: 'First Name' } });
@@ -130,13 +128,14 @@ describe('Counter debouncing', () => {
         reactTesting.fireEvent.change(nameInput, { target: { value: 'Second Name' } });
         reactTesting.fireEvent.keyDown(nameInput, { key: 'Enter' });
 
-        expect(onNameChange).not.toHaveBeenCalled();
+        expect(onChange).not.toHaveBeenCalled();
 
         await reactTesting.act(async () => {
             vi.runAllTimers();
         });
 
-        expect(onNameChange).toHaveBeenCalledTimes(1);
-        expect(onNameChange).toHaveBeenCalledWith(id, 'Second Name');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({ name: 'Second Name' });
+
     });
 });
