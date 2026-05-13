@@ -48,41 +48,26 @@ describe('Basic functionality', () => {
         expect(onChange).toHaveBeenCalledWith({ name: 'My Counter' });
     });
 
-    it('modify-name', async () => {
-        const onNameChange = vi.fn<(id: string, name: string) => void>();
-        reactTesting.render(<Counter.Counter onNameChange={onNameChange} />);
-
-        const id = onNameChange.mock.calls[0][0];
-        expect(onNameChange).toHaveBeenCalledTimes(1);
-        expect(id).toMatch(UUID_REGEX);
-        onNameChange.mockClear();
-
-        expect(reactTesting.screen.getByText('untitled')).toBeInTheDocument();
-
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('untitled'));
-
-        const nameInput = reactTesting.screen.getByTestId('name-input');
-        reactTesting.fireEvent.change(nameInput, { target: { value: 'My Counter' } });
-        reactTesting.fireEvent.blur(nameInput);
+    it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
+        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        reactTesting.render(
+            <Counter.Counter id="test-id" name="My Counter" count={0} onChange={onChange} />,
+        );
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
+        expect(onChange).not.toHaveBeenCalled();
+
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('My Counter'));
+
+        const nameInput = reactTesting.screen.getByTestId('name-input');
+        reactTesting.fireEvent.change(nameInput, { target: { value: 'Renamed Counter' } });
+        confirm(nameInput);
         await reactTesting.act(async () => {
             vi.runAllTimers();
         });
-        expect(onNameChange).toHaveBeenCalledTimes(1);
-        expect(onNameChange).toHaveBeenCalledWith(id, 'My Counter');
-        onNameChange.mockClear();
 
-        reactTesting.fireEvent.change(nameInput, { target: { value: 'NamedByEnterKey' } });
-        reactTesting.fireEvent.keyDown(nameInput, { key: 'Enter' });
-        reactTesting.fireEvent.blur(nameInput);
-
-        expect(reactTesting.screen.getByText('NamedByEnterKey')).toBeInTheDocument();
-        await reactTesting.act(async () => {
-            vi.runAllTimers();
-        });
-        expect(onNameChange).toHaveBeenCalledTimes(1);
-        expect(onNameChange).toHaveBeenCalledWith(id, 'NamedByEnterKey');
+        expect(onChange).toHaveBeenCalledOnce();
+        expect(onChange).toHaveBeenCalledWith({ name: 'Renamed Counter' });
     });
 });
 
