@@ -96,7 +96,7 @@ describe('Counter value', () => {
         const value = Math.floor(Math.random() * 100) + 1;
 
         reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-button'));
-        let setInput = reactTesting.screen.getByTestId('set-input');
+        const setInput = reactTesting.screen.getByTestId('set-input');
         expect(setInput).toHaveValue('0');
         reactTesting.fireEvent.change(setInput, { target: { value: String(value) } });
         confirm(setInput);
@@ -116,8 +116,9 @@ describe('Counter debouncing', () => {
 
     it('debounce-name-change', async () => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
-        reactTesting.render(<Counter.Counter id="test-id" name="Zeroth Name" count={0} onChange={onChange} />);
-
+        reactTesting.render(
+            <Counter.Counter id="test-id" name="Zeroth Name" count={0} onChange={onChange} />
+        );
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('Zeroth Name'));
         const nameInput = reactTesting.screen.getByTestId('name-input');
@@ -136,6 +137,5 @@ describe('Counter debouncing', () => {
 
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith({ name: 'Second Name' });
-
     });
 });
