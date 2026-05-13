@@ -51,7 +51,7 @@ describe('Basic functionality', () => {
     it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
         reactTesting.render(
-            <Counter.Counter id="test-id" name="My Counter" count={0} onChange={onChange} />,
+            <Counter.Counter id="test-id" name="My Counter" count={0} onChange={onChange} />
         );
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe('Counter value', () => {
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('44');
     });
 
-    it('set allows setting an arbitrary value', () => {
+    it.each(confirmMethods)('set allows setting an arbitrary value ($label)', ({ confirm }) => {
         reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
 
@@ -99,10 +99,9 @@ describe('Counter value', () => {
         let setInput = reactTesting.screen.getByTestId('set-input');
         expect(setInput).toHaveValue('0');
         reactTesting.fireEvent.change(setInput, { target: { value: String(value) } });
-        reactTesting.fireEvent.keyDown(setInput, { key: 'Enter' });
+        confirm(setInput);
 
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(value));
-
     });
 });
 
