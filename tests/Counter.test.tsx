@@ -46,7 +46,7 @@ describe('Basic functionality', () => {
 
         expect(onChange).toHaveBeenCalledOnce();
         expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter' });
-        expect(reactTesting.screen.queryByTestId('name-input')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('name-input')).not.toBeVisible();
     });
 
     it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
@@ -60,7 +60,9 @@ describe('Basic functionality', () => {
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('My Counter'));
 
-        const nameInput = reactTesting.screen.getByTestId('name-input');
+        let nameInput = reactTesting.screen.getByTestId('name-input');
+        expect(nameInput).toHaveValue('My Counter');
+        expect(nameInput).toBeVisible();
         reactTesting.fireEvent.change(nameInput, { target: { value: 'Renamed Counter' } });
         confirm(nameInput);
         await reactTesting.act(async () => {
@@ -69,6 +71,8 @@ describe('Basic functionality', () => {
 
         expect(onChange).toHaveBeenCalledOnce();
         expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Renamed Counter' });
+        nameInput = reactTesting.screen.getByTestId('name-input');
+        expect(nameInput).not.toBeVisible();
     });
 });
 
