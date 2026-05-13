@@ -4,6 +4,17 @@ import * as Counter from '../src/Counter';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+const confirmMethods = [
+    {
+        label: 'Enter key',
+        confirm: (input: HTMLElement) => { reactTesting.fireEvent.keyDown(input, { key: 'Enter' }) },
+    },
+    {
+        label: 'blur',
+        confirm: (input: HTMLElement) => { reactTesting.fireEvent.blur(input) },
+    },
+];
+
 describe('Basic functionality', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -13,7 +24,8 @@ describe('Basic functionality', () => {
         vi.useRealTimers();
     });
 
-    it('initial state', async () => {
+
+    it.each(confirmMethods)('initial state ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
         reactTesting.render(<Counter.Counter id="test-id" name="" count={0} onChange={onChange} />);
 
@@ -22,12 +34,9 @@ describe('Basic functionality', () => {
         expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
         expect(onChange).not.toHaveBeenCalled();
 
-        reactTesting.fireEvent.change(reactTesting.screen.getByTestId('name-input'), {
-            target: { value: 'My Counter' },
-        });
-        reactTesting.fireEvent.keyDown(reactTesting.screen.getByTestId('name-input'), {
-            key: 'Enter',
-        });
+        const nameInput = reactTesting.screen.getByTestId('name-input');
+        reactTesting.fireEvent.change(nameInput, { target: { value: 'My Counter' } });
+        confirm(nameInput);
         await reactTesting.act(async () => {
             vi.runAllTimers();
         });
