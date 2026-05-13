@@ -27,7 +27,7 @@ describe('Basic functionality', () => {
     });
 
     it.each(confirmMethods)('initial state ($label)', async ({ confirm }) => {
-        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        const onChange = vi.fn<(changes: { id: string; name?: string; count?: number }) => void>();
         reactTesting.render(
             <Counter.Counter id="mycounter-id" name="" count={0} onChange={onChange} />
         );
@@ -45,11 +45,11 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ name: 'My Counter' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter' });
     });
 
     it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
-        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        const onChange = vi.fn<(changes: { id: string; name?: string; count?: number }) => void>();
         reactTesting.render(
             <Counter.Counter id="mycounter-id" name="My Counter" count={0} onChange={onChange} />
         );
@@ -67,7 +67,7 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ name: 'Renamed Counter' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Renamed Counter' });
     });
 });
 
@@ -115,7 +115,7 @@ describe('Counter debouncing', () => {
     });
 
     it('debounce-name-change', async () => {
-        const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
+        const onChange = vi.fn<(changes: { id: string; name?: string; count?: number }) => void>();
         reactTesting.render(
             <Counter.Counter id="mycounter-id" name="Zeroth Name" count={0} onChange={onChange} />
         );
@@ -136,6 +136,6 @@ describe('Counter debouncing', () => {
         });
 
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({ name: 'Second Name' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Second Name' });
     });
 });
