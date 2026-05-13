@@ -2,8 +2,6 @@ import { vi } from 'vitest';
 import * as reactTesting from '@testing-library/react';
 import * as Counter from '../src/Counter';
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 const confirmMethods = [
     {
         label: 'Enter key',
@@ -30,7 +28,9 @@ describe('Basic functionality', () => {
 
     it.each(confirmMethods)('initial state ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
-        reactTesting.render(<Counter.Counter id="test-id" name="" count={0} onChange={onChange} />);
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="" count={0} onChange={onChange} />
+        );
 
         expect(reactTesting.screen.getByTestId('name-input')).toBeInTheDocument();
         expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('Basic functionality', () => {
     it.each(confirmMethods)('modify-name ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
         reactTesting.render(
-            <Counter.Counter id="test-id" name="My Counter" count={0} onChange={onChange} />
+            <Counter.Counter id="mycounter-id" name="My Counter" count={0} onChange={onChange} />
         );
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
@@ -73,24 +73,24 @@ describe('Basic functionality', () => {
 
 describe('Counter value', () => {
     it('starts at 0', () => {
-        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={0} />);
+        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
     });
 
     it('inc increments counter', () => {
-        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={55} />);
+        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={55} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('inc'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('56');
     });
 
     it('dec decrements counter', () => {
-        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={45} />);
+        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={45} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('44');
     });
 
     it.each(confirmMethods)('set allows setting an arbitrary value ($label)', ({ confirm }) => {
-        reactTesting.render(<Counter.Counter id="test-id" name="My Counter" count={0} />);
+        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
 
         const value = Math.floor(Math.random() * 100) + 1;
@@ -117,7 +117,7 @@ describe('Counter debouncing', () => {
     it('debounce-name-change', async () => {
         const onChange = vi.fn<(changes: { name?: string; count?: number }) => void>();
         reactTesting.render(
-            <Counter.Counter id="test-id" name="Zeroth Name" count={0} onChange={onChange} />
+            <Counter.Counter id="mycounter-id" name="Zeroth Name" count={0} onChange={onChange} />
         );
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('Zeroth Name'));
