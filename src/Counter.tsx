@@ -35,8 +35,8 @@ export function Counter({
         setName(newName);
         if (!named && newName) {
             setNamed(true);
-            onChange?.({ name: newName });
         }
+        onChange?.({ name: newName });
     }
 
     return (
