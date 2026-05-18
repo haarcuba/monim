@@ -1,8 +1,10 @@
 import './App.css';
+import type { User } from 'firebase/auth';
 import * as Counter from './Counter';
 import { useAuth } from './AuthContext';
 import { SignInPage } from './SignInPage';
 import { UserAvatar } from './UserAvatar';
+import { useCounters } from './useCounters';
 
 function App() {
     const { user, loading } = useAuth();
@@ -10,18 +12,26 @@ function App() {
     if (loading) return null;
     if (!user) return <SignInPage />;
 
-    function onChange(changes: { id: string; name?: string; count?: number }) {
-        const id = changes.id;
-        const name = changes.name as string;
-        console.log(`Counter ${id} is now named ${name}`);
-    }
+    return <AppContent userId={user.uid} user={user} />;
+}
+
+function AppContent({ userId, user }: { userId: string; user: User }) {
+    const { counters, createCounter, updateCounter } = useCounters(userId);
 
     return (
         <>
             <UserAvatar user={user} />
             <section id="center">
-                <Counter.Counter onChange={onChange} id="jaki" name="Jaki" count={0} />
-                <Counter.Counter onChange={onChange} id="yosi" name="Yosi" count={0} />
+                {counters.map((c) => (
+                    <Counter.Counter
+                        key={c.id}
+                        id={c.id}
+                        name={c.name}
+                        count={c.count}
+                        onChange={(changes) => updateCounter(c.id, changes)}
+                    />
+                ))}
+                <button onClick={createCounter}>+ counter</button>
             </section>
         </>
     );

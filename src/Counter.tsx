@@ -1,9 +1,8 @@
-import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SetButton } from './SetButton';
 import { EditableName } from './EditableName';
 
-interface Props {
+export interface Props {
     id: string;
     name: string;
     count: number;
@@ -11,39 +10,21 @@ interface Props {
     debounceMS?: number;
 }
 
-export function Counter({
-    id,
-    name: nameProp,
-    count: countProp,
-    onChange,
-    debounceMS = 300,
-}: Props) {
-    const [name, setName] = React.useState(nameProp);
-    const [count, setCount] = React.useState(countProp);
-    const [named, setNamed] = React.useState(nameProp !== '');
-
+export function Counter({ id, name, count, onChange, debounceMS = 300 }: Props) {
     const debouncedOnChange = useDebouncedCallback(
         (changes: { name?: string; count?: number }) => onChange?.({ id, ...changes }),
         debounceMS
     );
 
-    function handleNameChange(newName: string) {
-        setName(newName);
-        if (!named && newName) {
-            setNamed(true);
-        }
-        debouncedOnChange({ name: newName });
-    }
-
     return (
         <div>
-            <EditableName name={name} onChange={handleNameChange} />
-            {named && (
+            <EditableName name={name} onChange={(newName) => debouncedOnChange({ name: newName })} />
+            {name !== '' && (
                 <>
-                    <button onClick={() => setCount((c) => c - 1)}>dec</button>
+                    <button onClick={() => onChange?.({ id, count: count - 1 })}>dec</button>
                     <div data-testid="counter">{count}</div>
-                    <button onClick={() => setCount((c) => c + 1)}>inc</button>
-                    <SetButton onSet={setCount} parse={Number} value={count} />
+                    <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
+                    <SetButton onSet={(v) => onChange?.({ id, count: v })} parse={Number} value={count} />
                 </>
             )}
         </div>

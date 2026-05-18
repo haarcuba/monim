@@ -1,6 +1,21 @@
 import { vi } from 'vitest';
+import { useState } from 'react';
 import * as reactTesting from '@testing-library/react';
 import * as Counter from '../src/Counter';
+
+function ControlledCounter(props: Counter.Props) {
+    const [count, setCount] = useState(props.count);
+    return (
+        <Counter.Counter
+            {...props}
+            count={count}
+            onChange={(changes) => {
+                if (changes.count !== undefined) setCount(changes.count);
+                props.onChange?.(changes);
+            }}
+        />
+    );
+}
 
 const confirmMethods = [
     {
@@ -83,19 +98,19 @@ describe('Counter value', () => {
     });
 
     it('inc increments counter', () => {
-        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={55} />);
+        reactTesting.render(<ControlledCounter id="mycounter-id" name="My Counter" count={55} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('inc'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('56');
     });
 
     it('dec decrements counter', () => {
-        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={45} />);
+        reactTesting.render(<ControlledCounter id="mycounter-id" name="My Counter" count={45} />);
         reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('44');
     });
 
     it.each(confirmMethods)('set allows setting an arbitrary value ($label)', ({ confirm }) => {
-        reactTesting.render(<Counter.Counter id="mycounter-id" name="My Counter" count={0} />);
+        reactTesting.render(<ControlledCounter id="mycounter-id" name="My Counter" count={0} />);
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('0');
 
         const value = Math.floor(Math.random() * 100) + 1;
