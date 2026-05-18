@@ -32,7 +32,7 @@ export function useCounters(userId: string) {
 
     async function updateCounter(id: string, changes: Counter.Changes) {
         const ref = firestore.doc(db, 'users', userId, 'counters', id);
-        await firestore.updateDoc(ref, {...changes});
+        await firestore.updateDoc(ref, { ...changes });
     }
 
     return { counters, createCounter, updateCounter };
