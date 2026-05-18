@@ -1,41 +1,38 @@
 import { useState, useEffect } from 'react';
-import {
-    collection,
-    query,
-    orderBy,
-    onSnapshot,
-    addDoc,
-    updateDoc,
-    doc,
-    serverTimestamp,
-} from 'firebase/firestore';
+import * as firestore from 'firebase/firestore';
 import { db } from './firebase';
+import * as Counter from './Counter';
 
-interface CounterData {
-    id: string;
-    name: string;
-    count: number;
+interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
+    createdAt: firestore.Timestamp | null;
+}
+
+function _counterData(doc: firestore.DocumentSnapshot): CounterData {
+    return {
+        id: doc.id,
+        ...doc.data(),
+    } as CounterData;
 }
 
 export function useCounters(userId: string) {
     const [counters, setCounters] = useState<CounterData[]>([]);
 
     useEffect(() => {
-        const col = collection(db, 'users', userId, 'counters');
-        const q = query(col, orderBy('createdAt'));
-        return onSnapshot(q, (snap) => {
-            setCounters(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as CounterData));
+        const col = firestore.collection(db, 'users', userId, 'counters');
+        const query = firestore.query(col, firestore.orderBy('createdAt'));
+        return firestore.onSnapshot(query, (snap) => {
+            setCounters(snap.docs.map(_counterData));
         });
     }, [userId]);
 
     async function createCounter() {
-        const col = collection(db, 'users', userId, 'counters');
-        await addDoc(col, { name: '', count: 0, createdAt: serverTimestamp() });
+        const col = firestore.collection(db, 'users', userId, 'counters');
+        await firestore.addDoc(col, { name: '', count: 0, createdAt: firestore.serverTimestamp() });
     }
 
-    async function updateCounter(id: string, changes: Partial<Pick<CounterData, 'name' | 'count'>>) {
-        const ref = doc(db, 'users', userId, 'counters', id);
-        await updateDoc(ref, changes);
+    async function updateCounter(id: string, changes: Counter.Changes) {
+        const ref = firestore.doc(db, 'users', userId, 'counters', id);
+        await firestore.updateDoc(ref, {...changes});
     }
 
     return { counters, createCounter, updateCounter };
