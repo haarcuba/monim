@@ -26,6 +26,8 @@ export function UserAvatar({ user }: { user: User }) {
                     borderRadius: '50%',
                 }}
             />
+            <div>{user.displayName}</div>
+            <div style={{ fontSize: '0.75rem', color: '#666' }}>{user.email}</div>
             <button onClick={signOut}>Sign out</button>
         </div>
     );
