@@ -27,7 +27,11 @@ export function useCounters(userId: string) {
 
     async function createCounter() {
         const counters_collection = firestore.collection(db, 'users', userId, 'counters');
-        await firestore.addDoc(counters_collection, { name: '', count: 0, createdAt: firestore.serverTimestamp() });
+        await firestore.addDoc(counters_collection, {
+            name: '',
+            count: 0,
+            createdAt: firestore.serverTimestamp(),
+        });
     }
 
     async function updateCounter(id: string, changes: Counter.Changes) {
