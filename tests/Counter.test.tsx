@@ -11,7 +11,6 @@ function ControlledCounter(props: Counter.Props) {
             count={count}
             onChange={(changes) => {
                 if (changes.count !== undefined) setCount(changes.count);
-                props.onChange?.(changes);
             }}
         />
     );
@@ -41,7 +40,7 @@ describe('Basic functionality', () => {
         vi.useRealTimers();
     });
 
-    it.each(confirmMethods)('initial state ($label)', async ({ confirm }) => {
+    it.each(confirmMethods)('initial state requires name ($label)', async ({ confirm }) => {
         const onChange = vi.fn<(changes: { id: string; name?: string; count?: number }) => void>();
         reactTesting.render(
             <Counter.Counter id="mycounter-id" name="" count={0} onChange={onChange} />
@@ -71,6 +70,7 @@ describe('Basic functionality', () => {
         );
 
         expect(reactTesting.screen.getByText('My Counter')).toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('name-input')).not.toBeVisible();
         expect(onChange).not.toHaveBeenCalled();
 
         reactTesting.fireEvent.click(reactTesting.screen.getByText('My Counter'));
