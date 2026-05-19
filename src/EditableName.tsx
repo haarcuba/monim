@@ -7,7 +7,8 @@ interface Props {
 
 export function EditableName({ name, onChange }: Props) {
     const [inputValue, setInputValue] = React.useState(name);
-    const [editing, setEditing] = React.useState(false);
+    const named = name !== '';
+    const [editing, setEditing] = React.useState(!named);
 
     function commit() {
         onChange(inputValue);
