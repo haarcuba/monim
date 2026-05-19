@@ -18,16 +18,16 @@ export function useCounters(userId: string) {
     const [counters, setCounters] = useState<CounterData[]>([]);
 
     useEffect(() => {
-        const col = firestore.collection(db, 'users', userId, 'counters');
-        const query = firestore.query(col, firestore.orderBy('createdAt'));
+        const counters_collection = firestore.collection(db, 'users', userId, 'counters');
+        const query = firestore.query(counters_collection, firestore.orderBy('createdAt'));
         return firestore.onSnapshot(query, (snap) => {
             setCounters(snap.docs.map(_counterData));
         });
     }, [userId]);
 
     async function createCounter() {
-        const col = firestore.collection(db, 'users', userId, 'counters');
-        await firestore.addDoc(col, { name: '', count: 0, createdAt: firestore.serverTimestamp() });
+        const counters_collection = firestore.collection(db, 'users', userId, 'counters');
+        await firestore.addDoc(counters_collection, { name: '', count: 0, createdAt: firestore.serverTimestamp() });
     }
 
     async function updateCounter(id: string, changes: Counter.Changes) {
