@@ -4,18 +4,14 @@ import { ShareModal } from '../src/ShareModal';
 
 describe('ShareModal', () => {
     it('renders an email input and a Share button', () => {
-        reactTesting.render(
-            <ShareModal sharedWith={[]} onShare={vi.fn()} onUnshare={vi.fn()} />
-        );
+        reactTesting.render(<ShareModal sharedWith={[]} onShare={vi.fn()} onUnshare={vi.fn()} />);
         expect(reactTesting.screen.getByTestId('share-email-input')).toBeInTheDocument();
         expect(reactTesting.screen.getByTestId('share-submit')).toBeInTheDocument();
     });
 
     it('calls onShare with the entered email on submit', () => {
         const onShare = vi.fn();
-        reactTesting.render(
-            <ShareModal sharedWith={[]} onShare={onShare} onUnshare={vi.fn()} />
-        );
+        reactTesting.render(<ShareModal sharedWith={[]} onShare={onShare} onUnshare={vi.fn()} />);
 
         const input = reactTesting.screen.getByTestId('share-email-input');
         reactTesting.fireEvent.change(input, { target: { value: 'alice@example.com' } });
@@ -25,7 +21,6 @@ describe('ShareModal', () => {
         expect(onShare).toHaveBeenCalledWith('alice@example.com');
         expect(input).toHaveValue('');
     });
-
 
     it('lists current sharedWith emails', () => {
         reactTesting.render(

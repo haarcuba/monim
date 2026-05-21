@@ -22,11 +22,7 @@ export function ShareModal({ sharedWith, onShare, onUnshare }: Props) {
     );
 }
 
-function _Share(
-    email: string,
-    setEmail: (v: string) => void,
-    onShare: () => void,
-) {
+function _Share(email: string, setEmail: (v: string) => void, onShare: () => void) {
     return (
         <>
             <input

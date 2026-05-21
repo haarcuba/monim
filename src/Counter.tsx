@@ -32,7 +32,7 @@ export function Counter({ id, name, count, isOwner = true, onChange, debounceMS 
             />
             {name !== '' && (
                 <>
-                    {isOwner &&  _OwnerControls1(id, count, onChange)}
+                    {isOwner && _OwnerControls1(id, count, onChange)}
                     <div data-testid="counter">{count}</div>
                     {isOwner && _OwnerControls2(id, count, onChange)}
                 </>
@@ -53,11 +53,7 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange) {
     return (
         <>
             <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
-            <SetButton
-                onSet={(v) => onChange?.({ id, count: v })}
-                parse={Number}
-                value={count}
-            />
+            <SetButton onSet={(v) => onChange?.({ id, count: v })} parse={Number} value={count} />
             <button data-testid="share-button">share</button>
         </>
     );
