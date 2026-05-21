@@ -125,6 +125,31 @@ describe('Counter value', () => {
     });
 });
 
+describe('View-only mode (isOwner=false)', () => {
+    it('hides inc, dec, and set buttons', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} />
+        );
+        expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('set-button')).not.toBeInTheDocument();
+    });
+
+    it('hides the share button', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} />
+        );
+        expect(reactTesting.screen.queryByTestId('share-button')).not.toBeInTheDocument();
+    });
+
+    it('shows the share button when isOwner is true', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
+        );
+        expect(reactTesting.screen.getByTestId('share-button')).toBeInTheDocument();
+    });
+});
+
 describe('Counter debouncing', () => {
     beforeEach(() => {
         vi.useFakeTimers();
