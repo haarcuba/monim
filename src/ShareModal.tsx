@@ -16,6 +16,19 @@ export function ShareModal({ sharedWith, onShare, onUnshare }: Props) {
 
     return (
         <>
+            {_Share(email, setEmail, handleShare)}
+            {_Unshare(sharedWith, onUnshare)}
+        </>
+    );
+}
+
+function _Share(
+    email: string,
+    setEmail: (v: string) => void,
+    onShare: () => void,
+) {
+    return (
+        <>
             <input
                 data-testid="share-email-input"
                 type="email"
@@ -23,17 +36,22 @@ export function ShareModal({ sharedWith, onShare, onUnshare }: Props) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
             />
-            <button data-testid="share-submit" onClick={handleShare}>
+            <button data-testid="share-submit" onClick={onShare}>
                 Share
             </button>
-            <ul>
-                {sharedWith.map((email_) => (
-                    <li key={email_}>
-                        <span>{email_}</span>
-                        <button onClick={() => onUnshare(email_)}>Revoke</button>
-                    </li>
-                ))}
-            </ul>
         </>
+    );
+}
+
+function _Unshare(sharedWith: string[], onUnshare: (email: string) => void) {
+    return (
+        <ul>
+            {sharedWith.map((email_) => (
+                <li key={email_}>
+                    <span>{email_}</span>
+                    <button onClick={() => onUnshare(email_)}>Revoke</button>
+                </li>
+            ))}
+        </ul>
     );
 }
