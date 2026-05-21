@@ -7,15 +7,18 @@ export interface Changes {
     count?: number;
 }
 
+type OnChange = (changes: { id: string } & Changes) => void;
+
 export interface Props {
     id: string;
     name: string;
     count: number;
-    onChange?: (changes: { id: string } & Changes) => void;
+    isOwner?: boolean;
+    onChange?: OnChange;
     debounceMS?: number;
 }
 
-export function Counter({ id, name, count, onChange, debounceMS = 300 }: Props) {
+export function Counter({ id, name, count, isOwner = true, onChange, debounceMS = 300 }: Props) {
     const debouncedOnChange = useDebouncedCallback(
         (changes: { name?: string; count?: number }) => onChange?.({ id, ...changes }),
         debounceMS
@@ -29,16 +32,33 @@ export function Counter({ id, name, count, onChange, debounceMS = 300 }: Props) 
             />
             {name !== '' && (
                 <>
-                    <button onClick={() => onChange?.({ id, count: count - 1 })}>dec</button>
+                    {isOwner &&  _OwnerControls1(id, count, onChange)}
                     <div data-testid="counter">{count}</div>
-                    <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
-                    <SetButton
-                        onSet={(v) => onChange?.({ id, count: v })}
-                        parse={Number}
-                        value={count}
-                    />
+                    {isOwner && _OwnerControls2(id, count, onChange)}
                 </>
             )}
         </div>
+    );
+}
+
+function _OwnerControls1(id: string, count: number, onChange?: OnChange) {
+    return (
+        <>
+            <button onClick={() => onChange?.({ id, count: count - 1 })}>dec</button>
+        </>
+    );
+}
+
+function _OwnerControls2(id: string, count: number, onChange?: OnChange) {
+    return (
+        <>
+            <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
+            <SetButton
+                onSet={(v) => onChange?.({ id, count: v })}
+                parse={Number}
+                value={count}
+            />
+            <button data-testid="share-button">share</button>
+        </>
     );
 }
