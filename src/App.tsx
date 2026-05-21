@@ -1,3 +1,4 @@
+// dummy
 import './App.css';
 import type { User } from 'firebase/auth';
 import * as Counter from './Counter';
