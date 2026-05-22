@@ -148,6 +148,15 @@ describe('View-only mode (isOwner=false)', () => {
         );
         expect(reactTesting.screen.getByTestId('share-button')).toBeInTheDocument();
     });
+
+    it('calls onShare when the share button is clicked', () => {
+        const onShare = vi.fn();
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} onShare={onShare} />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('share-button'));
+        expect(onShare).toHaveBeenCalledOnce();
+    });
 });
 
 describe('Counter debouncing', () => {
