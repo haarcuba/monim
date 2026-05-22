@@ -18,7 +18,10 @@ function waitForEmulator(port: number, timeoutMs = 30_000): Promise<void> {
         const deadline = Date.now() + timeoutMs;
         function probe() {
             const socket = createConnection(port, 'localhost');
-            socket.on('connect', () => { socket.destroy(); resolve(); });
+            socket.on('connect', () => {
+                socket.destroy();
+                resolve();
+            });
             socket.on('error', () => {
                 if (Date.now() >= deadline) reject(new Error(`Emulator not ready on port ${port}`));
                 else setTimeout(probe, 500);
@@ -58,9 +61,7 @@ function ownerDb() {
 }
 
 function sharedUserDb() {
-    return testEnv
-        .authenticatedContext('shared-uid', { email: 'shared@example.com' })
-        .firestore();
+    return testEnv.authenticatedContext('shared-uid', { email: 'shared@example.com' }).firestore();
 }
 
 function otherUserDb() {
@@ -155,28 +156,39 @@ describe('/shares/{email}/counters/{counterId}', () => {
 
     it('owner can delete a share reference', async () => {
         await testEnv.withSecurityRulesDisabled(async (ctx) => {
-            await setDoc(doc(ctx.firestore(), 'shares', 'shared@example.com', 'counters', 'counter-1'), {
-                ownerUid: 'owner-uid',
-            });
+            await setDoc(
+                doc(ctx.firestore(), 'shares', 'shared@example.com', 'counters', 'counter-1'),
+                {
+                    ownerUid: 'owner-uid',
+                }
+            );
         });
         await assertSucceeds(deleteDoc(shareRef(ownerDb(), 'shared@example.com')));
     });
 
     it('recipient can read their own share references', async () => {
         await testEnv.withSecurityRulesDisabled(async (ctx) => {
-            await setDoc(doc(ctx.firestore(), 'shares', 'shared@example.com', 'counters', 'counter-1'), {
-                ownerUid: 'owner-uid',
-            });
+            await setDoc(
+                doc(ctx.firestore(), 'shares', 'shared@example.com', 'counters', 'counter-1'),
+                {
+                    ownerUid: 'owner-uid',
+                }
+            );
         });
         await assertSucceeds(getDoc(shareRef(sharedUserDb(), 'shared@example.com')));
     });
 
     it("recipient cannot read another user's share references", async () => {
         await testEnv.withSecurityRulesDisabled(async (ctx) => {
-            await setDoc(doc(ctx.firestore(), 'shares', 'other@example.com', 'counters', 'counter-1'), {
-                ownerUid: 'owner-uid',
-            });
+            await setDoc(
+                doc(ctx.firestore(), 'shares', 'other@example.com', 'counters', 'counter-1'),
+                {
+                    ownerUid: 'owner-uid',
+                }
+            );
         });
-        await assertFails(getDoc(doc(sharedUserDb(), 'shares', 'other@example.com', 'counters', 'counter-1')));
+        await assertFails(
+            getDoc(doc(sharedUserDb(), 'shares', 'other@example.com', 'counters', 'counter-1'))
+        );
     });
 });
