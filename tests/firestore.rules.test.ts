@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { readFileSync } from 'fs';
+import { spawn, type ChildProcess } from 'child_process';
+import { createConnection } from 'net';
 import {
     initializeTestEnvironment,
     assertFails,
@@ -8,13 +10,33 @@ import {
 } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-const PROJECT_ID = 'monim-495821';
+const PROJECT_ID = 'test-project';
 const EMULATOR_HOST = 'localhost';
 const EMULATOR_PORT = 8080;
 
 let testEnv: RulesTestEnvironment;
+let emulatorProcess: ChildProcess;
+
+function waitForEmulator(port: number, timeoutMs = 30_000): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const deadline = Date.now() + timeoutMs;
+        function probe() {
+            const socket = createConnection(port, 'localhost');
+            socket.on('connect', () => { socket.destroy(); resolve(); });
+            socket.on('error', () => {
+                if (Date.now() >= deadline) reject(new Error(`Emulator not ready on port ${port}`));
+                else setTimeout(probe, 500);
+            });
+        }
+        probe();
+    });
+}
 
 beforeAll(async () => {
+    emulatorProcess = spawn('firebase', ['emulators:start', '--only', 'firestore'], {
+        stdio: 'pipe',
+    });
+    await waitForEmulator(EMULATOR_PORT);
     testEnv = await initializeTestEnvironment({
         projectId: PROJECT_ID,
         firestore: {
@@ -23,10 +45,11 @@ beforeAll(async () => {
             port: EMULATOR_PORT,
         },
     });
-});
+}, 40_000);
 
 afterAll(async () => {
     await testEnv.cleanup();
+    emulatorProcess?.kill();
 });
 
 afterEach(async () => {
