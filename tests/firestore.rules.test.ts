@@ -10,10 +10,6 @@ import {
 } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
-const PROJECT_ID = 'test-project';
-const EMULATOR_HOST = 'localhost';
-const EMULATOR_PORT = 8080;
-
 let testEnv: RulesTestEnvironment;
 let emulatorProcess: ChildProcess;
 
@@ -33,15 +29,16 @@ function waitForEmulator(port: number, timeoutMs = 30_000): Promise<void> {
 }
 
 beforeAll(async () => {
+    const EMULATOR_PORT = 8080;
     emulatorProcess = spawn('firebase', ['emulators:start', '--only', 'firestore'], {
         stdio: 'pipe',
     });
     await waitForEmulator(EMULATOR_PORT);
     testEnv = await initializeTestEnvironment({
-        projectId: PROJECT_ID,
+        projectId: 'test-project',
         firestore: {
             rules: readFileSync('firestore.rules', 'utf8'),
-            host: EMULATOR_HOST,
+            host: 'localhost',
             port: EMULATOR_PORT,
         },
     });
