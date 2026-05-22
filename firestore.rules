@@ -3,6 +3,17 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId}/counters/{counterId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null
+                  && request.auth.token.email != null
+                  && request.auth.token.email in resource.data.sharedWith;
+    }
+
+    match /shares/{email}/counters/{counterId} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow create: if request.auth != null
+                    && request.resource.data.ownerUid == request.auth.uid;
+      allow delete: if request.auth != null
+                    && resource.data.ownerUid == request.auth.uid;
     }
   }
 }
