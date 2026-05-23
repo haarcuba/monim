@@ -41,15 +41,18 @@ export function useCounters(userId: string) {
     }
 
     async function shareCounter(counterId: string, email: string) {
-        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId),
-            { sharedWith: firestore.arrayUnion(email) });
-        await firestore.setDoc(firestore.doc(db, 'shares', email, 'counters', counterId),
-            { ownerUid: userId });
+        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId), {
+            sharedWith: firestore.arrayUnion(email),
+        });
+        await firestore.setDoc(firestore.doc(db, 'shares', email, 'counters', counterId), {
+            ownerUid: userId,
+        });
     }
 
     async function unshareCounter(counterId: string, email: string) {
-        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId),
-            { sharedWith: firestore.arrayRemove(email) });
+        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId), {
+            sharedWith: firestore.arrayRemove(email),
+        });
         await firestore.deleteDoc(firestore.doc(db, 'shares', email, 'counters', counterId));
     }
 

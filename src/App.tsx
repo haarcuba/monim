@@ -18,7 +18,8 @@ function App() {
 }
 
 function AppContent({ userId, user }: { userId: string; user: User }) {
-    const { counters, createCounter, updateCounter, shareCounter, unshareCounter } = useCounters(userId);
+    const { counters, createCounter, updateCounter, shareCounter, unshareCounter } =
+        useCounters(userId);
     const [sharingCounterId, setSharingCounterId] = useState<string | null>(null);
 
     return (
@@ -37,8 +38,14 @@ function AppContent({ userId, user }: { userId: string; user: User }) {
                         {sharingCounterId === c.id && (
                             <ShareModal.ShareModal
                                 sharedWith={c.sharedWith ?? []}
-                                onShare={(email) => {shareCounter(c.id, email); setSharingCounterId(null);}}
-                                onUnshare={(email) => {unshareCounter(c.id, email); setSharingCounterId(null);}}
+                                onShare={(email) => {
+                                    shareCounter(c.id, email);
+                                    setSharingCounterId(null);
+                                }}
+                                onUnshare={(email) => {
+                                    unshareCounter(c.id, email);
+                                    setSharingCounterId(null);
+                                }}
                                 onClose={() => setSharingCounterId(null)}
                             />
                         )}

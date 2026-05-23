@@ -19,7 +19,15 @@ export interface Props {
     debounceMS?: number;
 }
 
-export function Counter({ id, name, count, isOwner = true, onChange, onShare, debounceMS = 300 }: Props) {
+export function Counter({
+    id,
+    name,
+    count,
+    isOwner = true,
+    onChange,
+    onShare,
+    debounceMS = 300,
+}: Props) {
     const debouncedOnChange = useDebouncedCallback(
         (changes: { name?: string; count?: number }) => onChange?.({ id, ...changes }),
         debounceMS
@@ -55,7 +63,9 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare
         <>
             <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
             <SetButton onSet={(v) => onChange?.({ id, count: v })} parse={Number} value={count} />
-            <button data-testid="share-button" onClick={onShare}>sharing...</button>
+            <button data-testid="share-button" onClick={onShare}>
+                sharing...
+            </button>
         </>
     );
 }

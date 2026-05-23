@@ -17,7 +17,9 @@ export function ShareModal({ sharedWith, onShare, onUnshare, onClose }: Props) {
 
     return (
         <>
-            <button data-testid="close-button" onClick={onClose}>❌</button>
+            <button data-testid="close-button" onClick={onClose}>
+                ❌
+            </button>
             {_Share(email, setEmail, handleShare)}
             {_Unshare(sharedWith, onUnshare)}
         </>
