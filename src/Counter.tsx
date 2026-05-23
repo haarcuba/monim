@@ -14,6 +14,7 @@ export interface Props {
     name: string;
     count: number;
     isOwner?: boolean;
+    sharedBy?: string;
     onChange?: OnChange;
     onShare?: () => void;
     debounceMS?: number;
@@ -24,6 +25,7 @@ export function Counter({
     name,
     count,
     isOwner = true,
+    sharedBy,
     onChange,
     onShare,
     debounceMS = 300,
@@ -44,6 +46,7 @@ export function Counter({
                     {isOwner && _OwnerControls1(id, count, onChange)}
                     <div data-testid="counter">{count}</div>
                     {isOwner && _OwnerControls2(id, count, onChange, onShare)}
+                    {sharedBy && <small data-testid="shared-by">{sharedBy}</small>}
                 </>
             )}
         </div>
