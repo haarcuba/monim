@@ -18,40 +18,40 @@ function App() {
 }
 
 function AppContent({ userId, user }: { userId: string; user: User }) {
-    const { counters, createCounter, updateCounter, shareCounter, unshareCounter } =
-        useCounters(userId);
-    const [sharingCounterId, setSharingCounterId] = useState<string | null>(null);
+    const counters = useCounters(userId);
+    const [currentlySharingId, setCurrentlySharing] = useState<string | null>(null);
+    const currentlySharing = {get: () => currentlySharingId, set: setCurrentlySharing};
 
     return (
         <>
             <UserAvatar user={user} />
             <section id="center">
-                {counters.map((c) => (
+                {counters.counters.map((c) => (
                     <div key={c.id}>
                         <Counter.Counter
                             id={c.id}
                             name={c.name}
                             count={c.count}
-                            onChange={(changes) => updateCounter(c.id, changes)}
-                            onShare={() => setSharingCounterId(c.id)}
+                            onChange={(changes) => counters.update(c.id, changes)}
+                            onShare={() => currentlySharing.set(c.id)}
                         />
-                        {sharingCounterId === c.id && (
+                        {currentlySharing.get() === c.id && (
                             <ShareModal.ShareModal
                                 sharedWith={c.sharedWith ?? []}
                                 onShare={(email) => {
-                                    shareCounter(c.id, email);
-                                    setSharingCounterId(null);
+                                    counters.share(c.id, email);
+                                    currentlySharing.set(null);
                                 }}
                                 onUnshare={(email) => {
-                                    unshareCounter(c.id, email);
-                                    setSharingCounterId(null);
+                                    counters.unshare(c.id, email);
+                                    currentlySharing.set(null);
                                 }}
-                                onClose={() => setSharingCounterId(null)}
+                                onClose={() => currentlySharing.set(null)}
                             />
                         )}
                     </div>
                 ))}
-                <button onClick={createCounter}>+ counter</button>
+                <button onClick={counters.create}>+ counter</button>
             </section>
         </>
     );

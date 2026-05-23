@@ -26,7 +26,7 @@ export function useCounters(userId: string) {
         });
     }, [userId]);
 
-    async function createCounter() {
+    async function create() {
         const counters_collection = firestore.collection(db, 'users', userId, 'counters');
         await firestore.addDoc(counters_collection, {
             name: '',
@@ -35,12 +35,12 @@ export function useCounters(userId: string) {
         });
     }
 
-    async function updateCounter(id: string, changes: Counter.Changes) {
+    async function update(id: string, changes: Counter.Changes) {
         const ref = firestore.doc(db, 'users', userId, 'counters', id);
         await firestore.updateDoc(ref, { ...changes });
     }
 
-    async function shareCounter(counterId: string, email: string) {
+    async function share(counterId: string, email: string) {
         await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId), {
             sharedWith: firestore.arrayUnion(email),
         });
@@ -49,12 +49,12 @@ export function useCounters(userId: string) {
         });
     }
 
-    async function unshareCounter(counterId: string, email: string) {
+    async function unshare(counterId: string, email: string) {
         await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId), {
             sharedWith: firestore.arrayRemove(email),
         });
         await firestore.deleteDoc(firestore.doc(db, 'shares', email, 'counters', counterId));
     }
 
-    return { counters, createCounter, updateCounter, shareCounter, unshareCounter };
+    return { counters, create, update, share, unshare };
 }
