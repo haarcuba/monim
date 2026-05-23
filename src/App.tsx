@@ -39,6 +39,7 @@ function AppContent({ userId, user }: { userId: string; user: User }) {
                                 sharedWith={c.sharedWith ?? []}
                                 onShare={(email) => {shareCounter(c.id, email); setSharingCounterId(null);}}
                                 onUnshare={(email) => {unshareCounter(c.id, email); setSharingCounterId(null);}}
+                                onClose={() => setSharingCounterId(null)}
                             />
                         )}
                     </div>

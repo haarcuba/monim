@@ -4,9 +4,10 @@ interface Props {
     sharedWith: string[];
     onShare: (email: string) => void;
     onUnshare: (email: string) => void;
+    onClose?: () => void;
 }
 
-export function ShareModal({ sharedWith, onShare, onUnshare }: Props) {
+export function ShareModal({ sharedWith, onShare, onUnshare, onClose }: Props) {
     const [email, setEmail] = useState('');
 
     function handleShare() {
@@ -16,6 +17,7 @@ export function ShareModal({ sharedWith, onShare, onUnshare }: Props) {
 
     return (
         <>
+            <button data-testid="close-button" onClick={onClose}>❌</button>
             {_Share(email, setEmail, handleShare)}
             {_Unshare(sharedWith, onUnshare)}
         </>

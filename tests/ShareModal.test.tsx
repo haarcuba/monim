@@ -34,6 +34,15 @@ describe('ShareModal', () => {
         expect(reactTesting.screen.getByText('bob@example.com')).toBeInTheDocument();
     });
 
+    it('calls onClose when the close button is clicked', () => {
+        const onClose = vi.fn();
+        reactTesting.render(
+            <ShareModal sharedWith={[]} onShare={vi.fn()} onUnshare={vi.fn()} onClose={onClose} />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('close-button'));
+        expect(onClose).toHaveBeenCalledOnce();
+    });
+
     it('calls onUnshare with the email when Revoke is clicked', () => {
         const onUnshare = vi.fn();
         reactTesting.render(
