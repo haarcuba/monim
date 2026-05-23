@@ -128,18 +128,20 @@ describe('Counter value', () => {
 describe('View-only mode (isOwner=false)', () => {
     it('hides inc, dec, and set buttons', () => {
         reactTesting.render(
-            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} />
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} sharedBy="owner@example.com" />
         );
         expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
         expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
         expect(reactTesting.screen.queryByTestId('set-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
     });
 
     it('hides the share button', () => {
         reactTesting.render(
-            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} />
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} sharedBy="owner@example.com" />
         );
         expect(reactTesting.screen.queryByTestId('share-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
     });
 
     it('shows the share button when isOwner is true', () => {
@@ -147,6 +149,7 @@ describe('View-only mode (isOwner=false)', () => {
             <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
         );
         expect(reactTesting.screen.getByTestId('share-button')).toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('shared-by')).not.toBeInTheDocument();
     });
 
     it('calls onShare when the share button is clicked', () => {
@@ -162,6 +165,7 @@ describe('View-only mode (isOwner=false)', () => {
         );
         reactTesting.fireEvent.click(reactTesting.screen.getByTestId('share-button'));
         expect(onShare).toHaveBeenCalledOnce();
+        expect(reactTesting.screen.queryByTestId('shared-by')).not.toBeInTheDocument();
     });
 });
 
