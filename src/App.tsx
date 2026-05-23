@@ -14,11 +14,11 @@ function App() {
     if (loading) return null;
     if (!user) return <SignInPage />;
 
-    return <AppContent userId={user.uid} user={user} />;
+    return <AppContent user={user} />;
 }
 
-function AppContent({ userId, user }: { userId: string; user: User }) {
-    const counters = useCounters(userId);
+function AppContent({ user }: { user: User }) {
+    const counters = useCounters(user);
     const [currentlySharingId, setCurrentlySharing] = useState<string | null>(null);
     const currentlySharing = { get: () => currentlySharingId, set: setCurrentlySharing };
 
