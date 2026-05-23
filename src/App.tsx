@@ -20,7 +20,7 @@ function App() {
 function AppContent({ userId, user }: { userId: string; user: User }) {
     const counters = useCounters(userId);
     const [currentlySharingId, setCurrentlySharing] = useState<string | null>(null);
-    const currentlySharing = {get: () => currentlySharingId, set: setCurrentlySharing};
+    const currentlySharing = { get: () => currentlySharingId, set: setCurrentlySharing };
 
     return (
         <>
