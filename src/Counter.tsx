@@ -55,7 +55,7 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare
         <>
             <button onClick={() => onChange?.({ id, count: count + 1 })}>inc</button>
             <SetButton onSet={(v) => onChange?.({ id, count: v })} parse={Number} value={count} />
-            <button data-testid="share-button" onClick={onShare}>share</button>
+            <button data-testid="share-button" onClick={onShare}>sharing...</button>
         </>
     );
 }

@@ -5,6 +5,7 @@ import * as Counter from './Counter';
 
 interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
     createdAt: firestore.Timestamp | null;
+    sharedWith?: string[];
 }
 
 function _counterData(doc: firestore.DocumentSnapshot): CounterData {
@@ -39,5 +40,18 @@ export function useCounters(userId: string) {
         await firestore.updateDoc(ref, { ...changes });
     }
 
-    return { counters, createCounter, updateCounter };
+    async function shareCounter(counterId: string, email: string) {
+        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId),
+            { sharedWith: firestore.arrayUnion(email) });
+        await firestore.setDoc(firestore.doc(db, 'shares', email, 'counters', counterId),
+            { ownerUid: userId });
+    }
+
+    async function unshareCounter(counterId: string, email: string) {
+        await firestore.updateDoc(firestore.doc(db, 'users', userId, 'counters', counterId),
+            { sharedWith: firestore.arrayRemove(email) });
+        await firestore.deleteDoc(firestore.doc(db, 'shares', email, 'counters', counterId));
+    }
+
+    return { counters, createCounter, updateCounter, shareCounter, unshareCounter };
 }
