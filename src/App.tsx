@@ -26,7 +26,7 @@ function AppContent({ user }: { user: User }) {
         <>
             <UserAvatar user={user} />
             <section id="center">
-                {counters.counters.map((c) => (
+                {counters.own.map((c) => (
                     <div key={c.id}>
                         <Counter.Counter
                             id={c.id}
@@ -53,6 +53,20 @@ function AppContent({ user }: { user: User }) {
                 ))}
                 <button onClick={counters.create}>+ counter</button>
             </section>
+            {counters.shared.length > 0 && (
+                <section id="shared">
+                    {counters.shared.map((c) => (
+                        <Counter.Counter
+                            key={c.id}
+                            id={c.id}
+                            name={c.name}
+                            count={c.count}
+                            isOwner={false}
+                            sharedBy={c.ownerEmail}
+                        />
+                    ))}
+                </section>
+            )}
         </>
     );
 }
