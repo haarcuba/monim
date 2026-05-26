@@ -38,15 +38,19 @@ function _subscribeToSharedCounter(
 }
 
 function _subscribeToShares(email: string, set: SetCounters): () => void {
-    const subscribedIds = new Set<string>();
-    const counterUnsubs: (() => void)[] = [];
+    const counterUnsubs = new Map<string, () => void>();
     const sharesCol = firestore.collection(db, 'shares', email, 'counters');
 
     const unsubShares = firestore.onSnapshot(sharesCol, (snap) => {
-        for (const shareDoc of snap.docs) {
-            if (subscribedIds.has(shareDoc.id)) continue;
-            subscribedIds.add(shareDoc.id);
-            counterUnsubs.push(_subscribeToSharedCounter(shareDoc, set));
+        for (const change of snap.docChanges()) {
+            if (change.type === 'added') {
+                if (counterUnsubs.has(change.doc.id)) continue;
+                counterUnsubs.set(change.doc.id, _subscribeToSharedCounter(change.doc, set));
+            } else if (change.type === 'removed') {
+                counterUnsubs.get(change.doc.id)?.();
+                counterUnsubs.delete(change.doc.id);
+                set(prev => prev.filter(c => c.id !== change.doc.id));
+            }
         }
     });
 
