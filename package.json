@@ -10,7 +10,6 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "preview": "vite preview",
-        "test": "vitest --run --coverage",
         "test:unit": "vitest --run --coverage",
         "test:integration": "vitest --run --config vitest.integration.config.ts",
         "test:watch": "vitest"

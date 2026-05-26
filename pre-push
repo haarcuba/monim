@@ -1,0 +1,10 @@
+#!/bin/bash
+
+[[ ! -z $SKIP_TESTS ]] && exit 0
+
+set -e
+npm run test:unit
+npm run test:integration
+npm run format:check
+npm run lint
+npm run build
