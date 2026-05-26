@@ -128,7 +128,13 @@ describe('Counter value', () => {
 describe('View-only mode (isOwner=false)', () => {
     it('hides inc, dec, and set buttons', () => {
         reactTesting.render(
-            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} sharedBy="owner@example.com" />
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
         );
         expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
         expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
@@ -138,7 +144,13 @@ describe('View-only mode (isOwner=false)', () => {
 
     it('hides the share button', () => {
         reactTesting.render(
-            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={false} sharedBy="owner@example.com" />
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
         );
         expect(reactTesting.screen.queryByTestId('share-button')).not.toBeInTheDocument();
         expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');

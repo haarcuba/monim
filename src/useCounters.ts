@@ -22,7 +22,7 @@ function _counterData(doc: firestore.DocumentSnapshot): CounterData {
 }
 
 function _upsertSharedCounter(id: string, data: CounterData, set: SetCounters) {
-    set(prev => [...prev.filter(c => c.id !== id), data]);
+    set((prev) => [...prev.filter((c) => c.id !== id), data]);
 }
 
 function _subscribeToSharedCounter(
@@ -49,12 +49,15 @@ function _subscribeToShares(email: string, set: SetCounters): () => void {
             } else if (change.type === 'removed') {
                 counterUnsubs.get(change.doc.id)?.();
                 counterUnsubs.delete(change.doc.id);
-                set(prev => prev.filter(c => c.id !== change.doc.id));
+                set((prev) => prev.filter((c) => c.id !== change.doc.id));
             }
         }
     });
 
-    return () => { unsubShares(); counterUnsubs.forEach(u => u()); };
+    return () => {
+        unsubShares();
+        counterUnsubs.forEach((u) => u());
+    };
 }
 
 export function useCounters(user: User) {

@@ -2,10 +2,7 @@ import { vi } from 'vitest';
 import * as fs from 'fs';
 import ChildProcess from 'child_process';
 import Net from 'net';
-import {
-    initializeTestEnvironment,
-    type RulesTestEnvironment,
-} from '@firebase/rules-unit-testing';
+import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import * as FireStore from 'firebase/firestore';
 import { render, screen, waitFor } from '@testing-library/react';
 import App from '../src/App';
@@ -85,16 +82,22 @@ afterAll(async () => {
 beforeEach(async () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {
         const adminDb = ctx.firestore();
-        await FireStore.setDoc(FireStore.doc(adminDb, 'users', USER_A_UID, 'counters', COUNTER_ID), {
-            name: 'Apples',
-            count: 0,
-            createdAt: null,
-            sharedWith: [USER_B_EMAIL],
-        });
-        await FireStore.setDoc(FireStore.doc(adminDb, 'shares', USER_B_EMAIL, 'counters', COUNTER_ID), {
-            ownerUid: USER_A_UID,
-            ownerEmail: USER_A_EMAIL,
-        });
+        await FireStore.setDoc(
+            FireStore.doc(adminDb, 'users', USER_A_UID, 'counters', COUNTER_ID),
+            {
+                name: 'Apples',
+                count: 0,
+                createdAt: null,
+                sharedWith: [USER_B_EMAIL],
+            }
+        );
+        await FireStore.setDoc(
+            FireStore.doc(adminDb, 'shares', USER_B_EMAIL, 'counters', COUNTER_ID),
+            {
+                ownerUid: USER_A_UID,
+                ownerEmail: USER_A_EMAIL,
+            }
+        );
     });
 });
 
@@ -116,7 +119,9 @@ describe('counter sharing', () => {
         expect(await screen.findByText('Apples')).toBeInTheDocument();
 
         const aDb = testEnv.authenticatedContext(USER_A_UID, { email: USER_A_EMAIL }).firestore();
-        await FireStore.updateDoc(FireStore.doc(aDb, 'users', USER_A_UID, 'counters', COUNTER_ID), { count: 1 });
+        await FireStore.updateDoc(FireStore.doc(aDb, 'users', USER_A_UID, 'counters', COUNTER_ID), {
+            count: 1,
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId('counter')).toHaveTextContent('1');
@@ -128,7 +133,9 @@ describe('counter sharing', () => {
         expect(await screen.findByText('Apples')).toBeInTheDocument();
 
         const aDb = testEnv.authenticatedContext(USER_A_UID, { email: USER_A_EMAIL }).firestore();
-        await FireStore.deleteDoc(FireStore.doc(aDb, 'shares', USER_B_EMAIL, 'counters', COUNTER_ID));
+        await FireStore.deleteDoc(
+            FireStore.doc(aDb, 'shares', USER_B_EMAIL, 'counters', COUNTER_ID)
+        );
         await FireStore.updateDoc(FireStore.doc(aDb, 'users', USER_A_UID, 'counters', COUNTER_ID), {
             sharedWith: FireStore.arrayRemove(USER_B_EMAIL),
         });
