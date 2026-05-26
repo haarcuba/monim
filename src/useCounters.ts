@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { User } from 'firebase/auth';
 import * as firestore from 'firebase/firestore';
-import { db } from './firebase';
-import * as Counter from './Counter';
+import { db } from '@/firebase';
+import * as Counter from '@/Counter';
 
 interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
     createdAt: firestore.Timestamp | null;

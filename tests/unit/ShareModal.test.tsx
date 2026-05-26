@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import * as reactTesting from '@testing-library/react';
-import { ShareModal } from '../src/ShareModal';
+import { ShareModal } from '@/ShareModal';
 
 describe('ShareModal', () => {
     it('renders an email input and a Share button', () => {

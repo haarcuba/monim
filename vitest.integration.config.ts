@@ -2,7 +2,6 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vite.dev/config/
 export default defineConfig({
     plugins: [react()],
     resolve: {
@@ -13,6 +12,6 @@ export default defineConfig({
         globals: true,
         setupFiles: ['./tests/setup.ts'],
         fileParallelism: false,
-        include: ['tests/unit/**/*.{test,spec}.{ts,tsx}'],
+        include: ['tests/integration/**/*.{test,spec}.{ts,tsx,ts}'],
     },
 });

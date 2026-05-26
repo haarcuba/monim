@@ -1,5 +1,5 @@
-import foxLogo from './assets/fox-hourglass-transparent.png';
-import { useAuth } from './AuthContext';
+import foxLogo from '@/assets/fox-hourglass-transparent.png';
+import { useAuth } from '@/AuthContext';
 
 function GoogleIcon() {
     return (

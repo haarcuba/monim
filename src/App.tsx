@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import './App.css';
 import type { User } from 'firebase/auth';
-import * as Counter from './Counter';
-import { useAuth } from './AuthContext';
-import { SignInPage } from './SignInPage';
-import { UserAvatar } from './UserAvatar';
-import { useCounters } from './useCounters';
-import * as ShareModal from './ShareModal';
+import * as Counter from '@/Counter';
+import { useAuth } from '@/AuthContext';
+import { SignInPage } from '@/SignInPage';
+import { UserAvatar } from '@/UserAvatar';
+import { useCounters } from '@/useCounters';
+import * as ShareModal from '@/ShareModal';
 
 function App() {
     const { user, loading } = useAuth();

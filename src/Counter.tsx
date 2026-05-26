@@ -1,6 +1,6 @@
 import { useDebouncedCallback } from 'use-debounce';
-import { SetButton } from './SetButton';
-import { EditableName } from './EditableName';
+import { SetButton } from '@/SetButton';
+import { EditableName } from '@/EditableName';
 
 export interface Changes {
     name?: string;

@@ -5,7 +5,7 @@ import Net from 'net';
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import * as FireStore from 'firebase/firestore';
 import { render, screen, waitFor } from '@testing-library/react';
-import App from '../src/App';
+import App from '@/App';
 
 let testEnv: RulesTestEnvironment;
 let emulatorProcess: ChildProcess.ChildProcess;
@@ -30,7 +30,7 @@ function waitForEmulator(port: number, timeoutMs = 30_000): Promise<void> {
     });
 }
 
-vi.mock('../src/firebase', () => ({
+vi.mock('@/firebase', () => ({
     get db() {
         return userBDb;
     },
@@ -38,7 +38,7 @@ vi.mock('../src/firebase', () => ({
     googleProvider: {},
 }));
 
-vi.mock('../src/AuthContext', () => ({
+vi.mock('@/AuthContext', () => ({
     useAuth: vi.fn().mockReturnValue({
         user: {
             uid: 'user-b-uid',

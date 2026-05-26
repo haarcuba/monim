@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import { useState } from 'react';
 import * as reactTesting from '@testing-library/react';
-import * as Counter from '../src/Counter';
+import * as Counter from '@/Counter';
 
 function ControlledCounter(props: Counter.Props) {
     const [count, setCount] = useState(props.count);
