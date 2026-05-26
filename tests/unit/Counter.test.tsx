@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import { useState } from 'react';
 import * as reactTesting from '@testing-library/react';
-import * as Counter from '../src/Counter';
+import * as Counter from '@/Counter';
 
 function ControlledCounter(props: Counter.Props) {
     const [count, setCount] = useState(props.count);
@@ -122,6 +122,62 @@ describe('Counter value', () => {
         confirm(setInput);
 
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent(String(value));
+    });
+});
+
+describe('View-only mode (isOwner=false)', () => {
+    it('hides inc, dec, and set buttons', () => {
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
+        );
+        expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('set-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
+    });
+
+    it('hides the share button', () => {
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
+        );
+        expect(reactTesting.screen.queryByTestId('share-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
+    });
+
+    it('shows the share button when isOwner is true', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
+        );
+        expect(reactTesting.screen.getByTestId('share-button')).toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('shared-by')).not.toBeInTheDocument();
+    });
+
+    it('calls onShare when the share button is clicked', () => {
+        const onShare = vi.fn();
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={true}
+                onShare={onShare}
+            />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('share-button'));
+        expect(onShare).toHaveBeenCalledOnce();
+        expect(reactTesting.screen.queryByTestId('shared-by')).not.toBeInTheDocument();
     });
 });
 

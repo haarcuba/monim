@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { useAuth } from './AuthContext';
+import { useAuth } from '@/AuthContext';
 
 export function UserAvatar({ user }: { user: User }) {
     const { signOut } = useAuth();
