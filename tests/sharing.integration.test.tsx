@@ -122,4 +122,19 @@ describe('counter sharing', () => {
             expect(screen.getByTestId('counter')).toHaveTextContent('1');
         });
     });
+
+    it('user B no longer sees the counter after user A removes the share', async () => {
+        render(<App />);
+        expect(await screen.findByText('Apples')).toBeInTheDocument();
+
+        const aDb = testEnv.authenticatedContext(USER_A_UID, { email: USER_A_EMAIL }).firestore();
+        await FireStore.deleteDoc(FireStore.doc(aDb, 'shares', USER_B_EMAIL, 'counters', COUNTER_ID));
+        await FireStore.updateDoc(FireStore.doc(aDb, 'users', USER_A_UID, 'counters', COUNTER_ID), {
+            sharedWith: FireStore.arrayRemove(USER_B_EMAIL),
+        });
+
+        await waitFor(() => {
+            expect(screen.queryByText('Apples')).not.toBeInTheDocument();
+        });
+    });
 });
