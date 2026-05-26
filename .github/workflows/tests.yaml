@@ -16,6 +16,11 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - uses: ./.github/actions/basic_setup
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '21'
             - name: Cache Firebase emulator JARs
               uses: actions/cache@v4
               with:
