@@ -5,7 +5,7 @@ import * as firestore from 'firebase/firestore';
 import { db } from '@/firebase';
 import * as Counter from '@/Counter';
 
-interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
+interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count' | 'history'> {
     createdAt: firestore.Timestamp | null;
     sharedWith?: string[];
     ownerUid?: string;
@@ -82,13 +82,34 @@ export function useCounters(user: User) {
         await firestore.addDoc(counters_collection, {
             name: '',
             count: 0,
+            history: [],
             createdAt: firestore.serverTimestamp(),
         });
     }
 
     async function update(id: string, changes: Counter.Changes) {
         const ref = firestore.doc(db, 'users', user.uid, 'counters', id);
-        await firestore.updateDoc(ref, { ...changes });
+        const currentCounter = ownCounters.find((counter) => counter.id === id);
+        const payload: firestore.UpdateData<firestore.DocumentData> = {};
+
+        if (changes.name !== undefined) payload.name = changes.name;
+        if (changes.count !== undefined) {
+            payload.count = changes.count;
+            const previousCount = currentCounter?.count;
+            const operation =
+                previousCount === undefined || changes.count === previousCount
+                    ? 'set'
+                    : changes.count > previousCount
+                      ? 'increment'
+                      : 'decrement';
+            payload.history = firestore.arrayUnion({
+                operation,
+                value: changes.count,
+                timestampMs: Date.now(),
+            });
+        }
+
+        await firestore.updateDoc(ref, payload);
     }
 
     async function share(counterId: string, email: string) {

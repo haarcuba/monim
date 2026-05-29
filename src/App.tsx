@@ -32,6 +32,7 @@ function AppContent({ user }: { user: User }) {
                             id={c.id}
                             name={c.name}
                             count={c.count}
+                            history={c.history ?? []}
                             onChange={(changes) => counters.update(c.id, changes)}
                             onShare={() => currentlySharing.set(c.id)}
                         />
@@ -61,6 +62,7 @@ function AppContent({ user }: { user: User }) {
                             id={c.id}
                             name={c.name}
                             count={c.count}
+                            history={c.history ?? []}
                             isOwner={false}
                             sharedBy={c.ownerEmail}
                         />

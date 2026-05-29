@@ -215,3 +215,38 @@ describe('Counter debouncing', () => {
         expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Second Name' });
     });
 });
+
+describe('Counter history', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('renders history sorted from most recent to least recent', () => {
+        const now = new Date('2026-01-02T12:00:00Z');
+        vi.setSystemTime(now);
+
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                history={[
+                    { operation: 'set', value: 2, timestampMs: now.getTime() - 2 * 60 * 60 * 1000 },
+                    { operation: 'increment', value: 5, timestampMs: now.getTime() - 60 * 1000 },
+                ]}
+            />
+        );
+
+        reactTesting.fireEvent.click(reactTesting.screen.getByText('View History'));
+
+        const rows = reactTesting.screen.getAllByRole('row');
+        expect(rows[1]).toHaveTextContent('5');
+        expect(rows[2]).toHaveTextContent('2');
+        expect(rows[1]).toHaveTextContent(/ago/i);
+        expect(rows[1]).toHaveTextContent(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
+    });
+});
