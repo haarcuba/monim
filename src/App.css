@@ -339,34 +339,94 @@ button svg {
     background: var(--accent-bg);
 }
 
-/* ── UserAvatar ──────────────────────────────────────────────── */
-.user-avatar {
-    position: fixed;
-    top: 1rem;
-    right: 1.2rem;
+/* ── App header ──────────────────────────────────────────────── */
+.app-header {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    z-index: 10;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+        padding: 0 16px;
+        height: 52px;
+    }
 }
 
-.user-avatar img {
-    width: 2.5rem;
-    height: 2.5rem;
+.app-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.app-header-logo {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+}
+
+.app-header-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-h);
+    letter-spacing: -0.3px;
+}
+
+/* ── UserAvatar (header widget) ──────────────────────────────── */
+.user-avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar-photo {
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius: 50%;
     border: 2px solid var(--accent-border);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-avatar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.2;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 }
 
 .user-name {
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-h);
 }
 
 .user-email {
+    font-size: 0.72rem;
     color: var(--text);
     opacity: 0.65;
+}
+
+.user-signout {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+
+    @media (max-width: 600px) {
+        padding: 4px 8px;
+        font-size: 0.72rem;
+    }
 }
 
 /* ── SignInPage ──────────────────────────────────────────────── */

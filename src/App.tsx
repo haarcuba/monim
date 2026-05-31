@@ -4,7 +4,7 @@ import type { User } from 'firebase/auth';
 import * as Counter from '@/Counter';
 import { useAuth } from '@/AuthContext';
 import { SignInPage } from '@/SignInPage';
-import { UserAvatar } from '@/UserAvatar';
+import { AppHeader } from '@/AppHeader';
 import { useCounters } from '@/useCounters';
 import * as ShareModal from '@/ShareModal';
 import { CounterHistory } from '@/CounterHistory';
@@ -33,7 +33,7 @@ function AppContent({ user }: { user: User }) {
     if (historyTarget) {
         return (
             <>
-                <UserAvatar user={user} />
+                <AppHeader user={user} />
                 <CounterHistory
                     counterId={historyTarget.counterId}
                     ownerUid={historyTarget.ownerUid}
@@ -46,7 +46,7 @@ function AppContent({ user }: { user: User }) {
 
     return (
         <>
-            <UserAvatar user={user} />
+            <AppHeader user={user} />
             <section id="center">
                 {counters.own.map((c) => (
                     <div key={c.id} className="counter-item">

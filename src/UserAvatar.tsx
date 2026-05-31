@@ -10,10 +10,13 @@ export function UserAvatar({ user }: { user: User }) {
                 src={user.photoURL ?? undefined}
                 alt={user.displayName ?? 'User'}
                 referrerPolicy="no-referrer"
+                className="user-avatar-photo"
             />
-            <div className="user-name">{user.displayName}</div>
-            <div className="user-email">{user.email}</div>
-            <button className="btn-ghost" onClick={signOut}>
+            <div className="user-avatar-info">
+                <span className="user-name">{user.displayName}</span>
+                <span className="user-email">{user.email}</span>
+            </div>
+            <button className="btn-ghost user-signout" onClick={signOut}>
                 Sign out
             </button>
         </div>
