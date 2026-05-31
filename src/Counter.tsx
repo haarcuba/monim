@@ -71,7 +71,13 @@ function _OwnerControls1(id: string, count: number, onChange?: OnChange) {
     );
 }
 
-function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare?: () => void, onDelete?: () => void) {
+function _OwnerControls2(
+    id: string,
+    count: number,
+    onChange?: OnChange,
+    onShare?: () => void,
+    onDelete?: () => void
+) {
     return (
         <>
             <button onClick={() => onChange?.({ id, count: count + 1, operation: 'inc' })}>
