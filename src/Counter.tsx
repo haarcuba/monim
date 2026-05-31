@@ -18,6 +18,7 @@ export interface Props {
     sharedBy?: string;
     onChange?: OnChange;
     onShare?: () => void;
+    onDelete?: () => void;
     onViewHistory?: () => void;
     debounceMS?: number;
 }
@@ -30,6 +31,7 @@ export function Counter({
     sharedBy,
     onChange,
     onShare,
+    onDelete,
     onViewHistory,
     debounceMS = 300,
 }: Props) {
@@ -48,7 +50,7 @@ export function Counter({
                 <>
                     {isOwner && _OwnerControls1(id, count, onChange)}
                     <div data-testid="counter">{count}</div>
-                    {isOwner && _OwnerControls2(id, count, onChange, onShare)}
+                    {isOwner && _OwnerControls2(id, count, onChange, onShare, onDelete)}
                     {sharedBy && <small data-testid="shared-by">{sharedBy}</small>}
                     <button data-testid="view-history-button" onClick={onViewHistory}>
                         View History
@@ -69,7 +71,7 @@ function _OwnerControls1(id: string, count: number, onChange?: OnChange) {
     );
 }
 
-function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare?: () => void) {
+function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare?: () => void, onDelete?: () => void) {
     return (
         <>
             <button onClick={() => onChange?.({ id, count: count + 1, operation: 'inc' })}>
@@ -82,6 +84,9 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange, onShare
             />
             <button data-testid="share-button" onClick={onShare}>
                 sharing...
+            </button>
+            <button data-testid="delete-button" onClick={onDelete}>
+                delete
             </button>
         </>
     );
