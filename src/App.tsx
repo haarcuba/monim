@@ -49,7 +49,7 @@ function AppContent({ user }: { user: User }) {
             <UserAvatar user={user} />
             <section id="center">
                 {counters.own.map((c) => (
-                    <div key={c.id}>
+                    <div key={c.id} className="counter-item">
                         <Counter.Counter
                             id={c.id}
                             name={c.name}
@@ -87,21 +87,22 @@ function AppContent({ user }: { user: User }) {
                 <section id="shared">
                     <p className="shared-section-label">Shared with you</p>
                     {counters.shared.map((c) => (
-                        <Counter.Counter
-                            key={c.id}
-                            id={c.id}
-                            name={c.name}
-                            count={c.count}
-                            isOwner={false}
-                            sharedBy={c.ownerEmail}
-                            onViewHistory={() =>
-                                setHistoryTarget({
-                                    counterId: c.id,
-                                    ownerUid: c.ownerUid!,
-                                    counterName: c.name,
-                                })
-                            }
-                        />
+                        <div key={c.id} className="counter-item">
+                            <Counter.Counter
+                                id={c.id}
+                                name={c.name}
+                                count={c.count}
+                                isOwner={false}
+                                sharedBy={c.ownerEmail}
+                                onViewHistory={() =>
+                                    setHistoryTarget({
+                                        counterId: c.id,
+                                        ownerUid: c.ownerUid!,
+                                        counterName: c.name,
+                                    })
+                                }
+                            />
+                        </div>
                     ))}
                 </section>
             )}
