@@ -41,59 +41,77 @@ export function Counter({
     );
 
     return (
-        <div>
+        <div className="counter-card">
             <EditableName
                 name={name}
                 onChange={(newName) => debouncedOnChange({ name: newName, operation: 'name' })}
             />
             {name !== '' && (
                 <>
-                    {isOwner && _OwnerControls1(id, count, onChange)}
-                    <div data-testid="counter">{count}</div>
-                    {isOwner && _OwnerControls2(id, count, onChange, onShare, onDelete)}
-                    {sharedBy && <small data-testid="shared-by">{sharedBy}</small>}
-                    <button data-testid="view-history-button" onClick={onViewHistory}>
-                        View History
-                    </button>
+                    <div className="counter-row">
+                        {isOwner && (
+                            <button
+                                className="btn-primary"
+                                onClick={() => onChange?.({ id, count: count - 1, operation: 'dec' })}
+                            >
+                                dec
+                            </button>
+                        )}
+                        <div data-testid="counter" className="counter-value">
+                            {count}
+                        </div>
+                        {isOwner && (
+                            <>
+                                <button
+                                    className="btn-primary"
+                                    onClick={() =>
+                                        onChange?.({ id, count: count + 1, operation: 'inc' })
+                                    }
+                                >
+                                    inc
+                                </button>
+                                <SetButton
+                                    onSet={(v) => onChange?.({ id, count: v, operation: 'set' })}
+                                    parse={Number}
+                                    value={count}
+                                />
+                            </>
+                        )}
+                    </div>
+                    <div className="counter-actions">
+                        {isOwner && (
+                            <>
+                                <button
+                                    data-testid="share-button"
+                                    className="btn-ghost"
+                                    onClick={onShare}
+                                >
+                                    sharing…
+                                </button>
+                                <button
+                                    data-testid="delete-button"
+                                    className="btn-danger"
+                                    onClick={onDelete}
+                                >
+                                    delete
+                                </button>
+                            </>
+                        )}
+                        {sharedBy && (
+                            <small data-testid="shared-by" className="shared-by">
+                                {sharedBy}
+                            </small>
+                        )}
+                        <button
+                            data-testid="view-history-button"
+                            className="btn-ghost"
+                            onClick={onViewHistory}
+                        >
+                            View History
+                        </button>
+                    </div>
                 </>
             )}
         </div>
-    );
-}
-
-function _OwnerControls1(id: string, count: number, onChange?: OnChange) {
-    return (
-        <>
-            <button onClick={() => onChange?.({ id, count: count - 1, operation: 'dec' })}>
-                dec
-            </button>
-        </>
-    );
-}
-
-function _OwnerControls2(
-    id: string,
-    count: number,
-    onChange?: OnChange,
-    onShare?: () => void,
-    onDelete?: () => void
-) {
-    return (
-        <>
-            <button onClick={() => onChange?.({ id, count: count + 1, operation: 'inc' })}>
-                inc
-            </button>
-            <SetButton
-                onSet={(v) => onChange?.({ id, count: v, operation: 'set' })}
-                parse={Number}
-                value={count}
-            />
-            <button data-testid="share-button" onClick={onShare}>
-                sharing...
-            </button>
-            <button data-testid="delete-button" onClick={onDelete}>
-                delete
-            </button>
-        </>
     );
 }

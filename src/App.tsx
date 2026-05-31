@@ -81,10 +81,11 @@ function AppContent({ user }: { user: User }) {
                         )}
                     </div>
                 ))}
-                <button onClick={counters.create}>+ counter</button>
+                <button className="add-counter-btn" onClick={counters.create}>+ counter</button>
             </section>
             {counters.shared.length > 0 && (
                 <section id="shared">
+                    <p className="shared-section-label">Shared with you</p>
                     {counters.shared.map((c) => (
                         <Counter.Counter
                             key={c.id}
