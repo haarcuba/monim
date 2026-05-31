@@ -150,7 +150,7 @@ describe('View-only mode (isOwner=false)', () => {
         expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
     });
 
-    it('hides the share button', () => {
+    it('hides the share and delete buttons', () => {
         reactTesting.render(
             <Counter.Counter
                 id="mycounter-id"
@@ -161,14 +161,16 @@ describe('View-only mode (isOwner=false)', () => {
             />
         );
         expect(reactTesting.screen.queryByTestId('share-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('delete-button')).not.toBeInTheDocument();
         expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
     });
 
-    it('shows the share button when isOwner is true', () => {
+    it('shows the share and delete buttons when isOwner is true', () => {
         reactTesting.render(
             <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
         );
         expect(reactTesting.screen.getByTestId('share-button')).toBeInTheDocument();
+        expect(reactTesting.screen.getByTestId('delete-button')).toBeInTheDocument();
         expect(reactTesting.screen.queryByTestId('shared-by')).not.toBeInTheDocument();
     });
 
@@ -223,6 +225,23 @@ describe('View History button', () => {
         );
         reactTesting.fireEvent.click(reactTesting.screen.getByTestId('view-history-button'));
         expect(onViewHistory).toHaveBeenCalledOnce();
+    });
+});
+
+describe('Delete button', () => {
+    it('calls onDelete when the delete button is clicked', () => {
+        const onDelete = vi.fn();
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={true}
+                onDelete={onDelete}
+            />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('delete-button'));
+        expect(onDelete).toHaveBeenCalledOnce();
     });
 });
 

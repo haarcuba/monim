@@ -56,6 +56,7 @@ function AppContent({ user }: { user: User }) {
                             count={c.count}
                             onChange={(changes) => counters.update(c.id, changes)}
                             onShare={() => currentlySharing.set(c.id)}
+                            onDelete={() => counters.destroy(c.id)}
                             onViewHistory={() =>
                                 setHistoryTarget({
                                     counterId: c.id,
