@@ -122,5 +122,15 @@ export function useCounters(user: User) {
         await Firestore.deleteDoc(Firestore.doc(db, 'shares', email, 'counters', counterId));
     }
 
-    return { own: ownCounters, shared: sharedCounters, create, update, share, unshare };
+    async function destroy(counterId: string) {
+        const counter = ownCounters.find((c) => c.id === counterId);
+        const batch = Firestore.writeBatch(db);
+        for (const email of counter?.sharedWith ?? []) {
+            batch.delete(Firestore.doc(db, 'shares', email, 'counters', counterId));
+        }
+        batch.delete(Firestore.doc(db, 'users', user.uid, 'counters', counterId));
+        await batch.commit();
+    }
+
+    return { own: ownCounters, shared: sharedCounters, create, update, share, unshare, destroy };
 }
