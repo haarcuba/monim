@@ -1,6 +1,7 @@
 import { useDebouncedCallback } from 'use-debounce';
 import { SetButton } from '@/SetButton';
 import { EditableName } from '@/EditableName';
+import { MinusIcon, PlusIcon, ShareIcon, TrashIcon, ClockIcon } from '@/Icons';
 
 export interface Changes {
     name?: string;
@@ -51,10 +52,12 @@ export function Counter({
                     <div className="counter-row">
                         {isOwner && (
                             <button
-                                className="btn-primary"
+                                data-testid="dec-button"
+                                className="btn-primary btn-icon"
+                                aria-label="Decrement"
                                 onClick={() => onChange?.({ id, count: count - 1, operation: 'dec' })}
                             >
-                                dec
+                                <MinusIcon />
                             </button>
                         )}
                         <div data-testid="counter" className="counter-value">
@@ -63,12 +66,14 @@ export function Counter({
                         {isOwner && (
                             <>
                                 <button
-                                    className="btn-primary"
+                                    data-testid="inc-button"
+                                    className="btn-primary btn-icon"
+                                    aria-label="Increment"
                                     onClick={() =>
                                         onChange?.({ id, count: count + 1, operation: 'inc' })
                                     }
                                 >
-                                    inc
+                                    <PlusIcon />
                                 </button>
                                 <SetButton
                                     onSet={(v) => onChange?.({ id, count: v, operation: 'set' })}
@@ -83,17 +88,19 @@ export function Counter({
                             <>
                                 <button
                                     data-testid="share-button"
-                                    className="btn-ghost"
+                                    className="btn-ghost btn-icon"
+                                    aria-label="Sharing options"
                                     onClick={onShare}
                                 >
-                                    sharing…
+                                    <ShareIcon />
                                 </button>
                                 <button
                                     data-testid="delete-button"
-                                    className="btn-danger"
+                                    className="btn-danger btn-icon"
+                                    aria-label="Delete counter"
                                     onClick={onDelete}
                                 >
-                                    delete
+                                    <TrashIcon />
                                 </button>
                             </>
                         )}
@@ -104,10 +111,11 @@ export function Counter({
                         )}
                         <button
                             data-testid="view-history-button"
-                            className="btn-ghost"
+                            className="btn-ghost btn-icon"
+                            aria-label="View history"
                             onClick={onViewHistory}
                         >
-                            View History
+                            <ClockIcon />
                         </button>
                     </div>
                 </>

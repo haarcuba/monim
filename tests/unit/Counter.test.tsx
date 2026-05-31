@@ -47,8 +47,8 @@ describe('Basic functionality', () => {
         );
 
         expect(reactTesting.screen.getByTestId('name-input')).toBeVisible();
-        expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
-        expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('inc-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('dec-button')).not.toBeInTheDocument();
         expect(onChange).not.toHaveBeenCalled();
 
         const nameInput = reactTesting.screen.getByTestId('name-input');
@@ -107,13 +107,13 @@ describe('Counter value', () => {
 
     it('inc increments counter', () => {
         reactTesting.render(<ControlledCounter id="mycounter-id" name="My Counter" count={55} />);
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('inc'));
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('inc-button'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('56');
     });
 
     it('dec decrements counter', () => {
         reactTesting.render(<ControlledCounter id="mycounter-id" name="My Counter" count={45} />);
-        reactTesting.fireEvent.click(reactTesting.screen.getByText('dec'));
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('dec-button'));
         expect(reactTesting.screen.getByTestId('counter')).toHaveTextContent('44');
     });
 
@@ -144,8 +144,8 @@ describe('View-only mode (isOwner=false)', () => {
                 sharedBy="owner@example.com"
             />
         );
-        expect(reactTesting.screen.queryByText('inc')).not.toBeInTheDocument();
-        expect(reactTesting.screen.queryByText('dec')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('inc-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('dec-button')).not.toBeInTheDocument();
         expect(reactTesting.screen.queryByTestId('set-button')).not.toBeInTheDocument();
         expect(reactTesting.screen.getByTestId('shared-by')).toHaveTextContent('owner@example.com');
     });
