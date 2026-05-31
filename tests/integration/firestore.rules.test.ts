@@ -141,6 +141,95 @@ describe('/users/{userId}/counters/{counterId}', () => {
     });
 });
 
+describe('/users/{userId}/counters/{counterId}/history/{historyId}', () => {
+    function historyRef(db: ReturnType<typeof ownerDb>) {
+        return doc(db, 'users', 'owner-uid', 'counters', 'counter-1', 'history', 'entry-1');
+    }
+
+    async function seedHistory() {
+        await testEnv.withSecurityRulesDisabled(async (ctx) => {
+            await setDoc(
+                doc(
+                    ctx.firestore(),
+                    'users',
+                    'owner-uid',
+                    'counters',
+                    'counter-1',
+                    'history',
+                    'entry-1'
+                ),
+                { value: 5, operation: 'inc', timestamp: null }
+            );
+        });
+    }
+
+    describe('owner', () => {
+        it('can read their own history entries', async () => {
+            await seedCounter(['shared@example.com']);
+            await seedHistory();
+            await assertSucceeds(getDoc(historyRef(ownerDb())));
+        });
+
+        it('can write history entries', async () => {
+            await seedCounter([]);
+            await assertSucceeds(
+                setDoc(historyRef(ownerDb()), { value: 1, operation: 'inc', timestamp: null })
+            );
+        });
+    });
+
+    describe('shared user (email in sharedWith)', () => {
+        beforeEach(async () => {
+            await seedCounter(['shared@example.com']);
+            await seedHistory();
+        });
+
+        it('can read history entries', async () => {
+            await assertSucceeds(getDoc(historyRef(sharedUserDb())));
+        });
+
+        it('cannot write history entries', async () => {
+            await assertFails(
+                setDoc(historyRef(sharedUserDb()), { value: 2, operation: 'inc', timestamp: null })
+            );
+        });
+    });
+
+    describe('non-shared authenticated user', () => {
+        beforeEach(async () => {
+            await seedCounter(['shared@example.com']);
+            await seedHistory();
+        });
+
+        it('cannot read history entries', async () => {
+            await assertFails(getDoc(historyRef(otherUserDb())));
+        });
+
+        it('cannot write history entries', async () => {
+            await assertFails(
+                setDoc(historyRef(otherUserDb()), { value: 3, operation: 'inc', timestamp: null })
+            );
+        });
+    });
+
+    describe('unauthenticated user', () => {
+        beforeEach(async () => {
+            await seedCounter([]);
+            await seedHistory();
+        });
+
+        it('cannot read history entries', async () => {
+            await assertFails(getDoc(historyRef(unauthDb())));
+        });
+
+        it('cannot write history entries', async () => {
+            await assertFails(
+                setDoc(historyRef(unauthDb()), { value: 4, operation: 'inc', timestamp: null })
+            );
+        });
+    });
+});
+
 describe('/shares/{email}/counters/{counterId}', () => {
     it('owner can create a share reference', async () => {
         await assertSucceeds(

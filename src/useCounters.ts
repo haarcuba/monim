@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { User } from 'firebase/auth';
 import * as firestore from 'firebase/firestore';
+import { writeBatch, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/firebase';
 import * as Counter from '@/Counter';
 
@@ -87,8 +88,23 @@ export function useCounters(user: User) {
     }
 
     async function update(id: string, changes: Counter.Changes) {
-        const ref = firestore.doc(db, 'users', user.uid, 'counters', id);
-        await firestore.updateDoc(ref, { ...changes });
+        const { operation, ...firestoreChanges } = changes;
+        const counterRef = firestore.doc(db, 'users', user.uid, 'counters', id);
+        if (firestoreChanges.count !== undefined) {
+            const batch = writeBatch(db);
+            batch.update(counterRef, firestoreChanges);
+            const historyRef = firestore.doc(
+                firestore.collection(db, 'users', user.uid, 'counters', id, 'history')
+            );
+            batch.set(historyRef, {
+                value: firestoreChanges.count,
+                operation: operation ?? 'set',
+                timestamp: serverTimestamp(),
+            });
+            await batch.commit();
+        } else {
+            await firestore.updateDoc(counterRef, firestoreChanges);
+        }
     }
 
     async function share(counterId: string, email: string) {

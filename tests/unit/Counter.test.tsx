@@ -181,6 +181,43 @@ describe('View-only mode (isOwner=false)', () => {
     });
 });
 
+describe('View History button', () => {
+    it('shows the View History button for owned counters', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
+        );
+        expect(reactTesting.screen.getByTestId('view-history-button')).toBeInTheDocument();
+    });
+
+    it('shows the View History button for non-owned (shared) counters', () => {
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
+        );
+        expect(reactTesting.screen.getByTestId('view-history-button')).toBeInTheDocument();
+    });
+
+    it('calls onViewHistory when the View History button is clicked', () => {
+        const onViewHistory = vi.fn();
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={true}
+                onViewHistory={onViewHistory}
+            />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('view-history-button'));
+        expect(onViewHistory).toHaveBeenCalledOnce();
+    });
+});
+
 describe('Counter debouncing', () => {
     beforeEach(() => {
         vi.useFakeTimers();
