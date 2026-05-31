@@ -12,12 +12,12 @@ export function CounterHistory({ counterId, ownerUid, counterName, onBack }: Pro
     const entries = useCounterHistory(ownerUid, counterId);
 
     return (
-        <div>
-            <button data-testid="back-button" onClick={onBack}>
+        <div className="history-view">
+            <button data-testid="back-button" className="btn-ghost" onClick={onBack}>
                 ← Back
             </button>
             <h2>{counterName} — history</h2>
-            <table>
+            <table className="history-table">
                 <thead>
                     <tr>
                         <th>Op</th>

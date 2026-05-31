@@ -4,7 +4,7 @@ import type { User } from 'firebase/auth';
 import * as Counter from '@/Counter';
 import { useAuth } from '@/AuthContext';
 import { SignInPage } from '@/SignInPage';
-import { UserAvatar } from '@/UserAvatar';
+import { AppHeader } from '@/AppHeader';
 import { useCounters } from '@/useCounters';
 import * as ShareModal from '@/ShareModal';
 import { CounterHistory } from '@/CounterHistory';
@@ -33,7 +33,7 @@ function AppContent({ user }: { user: User }) {
     if (historyTarget) {
         return (
             <>
-                <UserAvatar user={user} />
+                <AppHeader user={user} />
                 <CounterHistory
                     counterId={historyTarget.counterId}
                     ownerUid={historyTarget.ownerUid}
@@ -46,10 +46,10 @@ function AppContent({ user }: { user: User }) {
 
     return (
         <>
-            <UserAvatar user={user} />
+            <AppHeader user={user} />
             <section id="center">
                 {counters.own.map((c) => (
-                    <div key={c.id}>
+                    <div key={c.id} className="counter-item">
                         <Counter.Counter
                             id={c.id}
                             name={c.name}
@@ -81,26 +81,30 @@ function AppContent({ user }: { user: User }) {
                         )}
                     </div>
                 ))}
-                <button onClick={counters.create}>+ counter</button>
+                <button className="add-counter-btn" onClick={counters.create}>
+                    + counter
+                </button>
             </section>
             {counters.shared.length > 0 && (
                 <section id="shared">
+                    <p className="shared-section-label">Shared with you</p>
                     {counters.shared.map((c) => (
-                        <Counter.Counter
-                            key={c.id}
-                            id={c.id}
-                            name={c.name}
-                            count={c.count}
-                            isOwner={false}
-                            sharedBy={c.ownerEmail}
-                            onViewHistory={() =>
-                                setHistoryTarget({
-                                    counterId: c.id,
-                                    ownerUid: c.ownerUid!,
-                                    counterName: c.name,
-                                })
-                            }
-                        />
+                        <div key={c.id} className="counter-item">
+                            <Counter.Counter
+                                id={c.id}
+                                name={c.name}
+                                count={c.count}
+                                isOwner={false}
+                                sharedBy={c.ownerEmail}
+                                onViewHistory={() =>
+                                    setHistoryTarget({
+                                        counterId: c.id,
+                                        ownerUid: c.ownerUid!,
+                                        counterName: c.name,
+                                    })
+                                }
+                            />
+                        </div>
                     ))}
                 </section>
             )}

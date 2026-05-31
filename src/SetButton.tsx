@@ -1,4 +1,5 @@
 import React from 'react';
+import { PencilIcon } from '@/Icons';
 
 interface Props<T> {
     onSet: (value: T) => void;
@@ -19,16 +20,20 @@ export function SetButton<T>({ onSet, parse, value }: Props<T>) {
         <>
             <button
                 data-testid="set-button"
+                className="btn-ghost btn-icon"
+                aria-label="Set value"
                 onClick={() => {
                     setInput(String(value));
                     setActive(true);
                 }}
             >
-                set
+                <PencilIcon />
             </button>
             {active && (
                 <input
                     data-testid="set-input"
+                    className="counter-name-input"
+                    style={{ width: '64px', textAlign: 'center' }}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onBlur={commit}

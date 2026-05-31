@@ -28,18 +28,9 @@ export function SignInPage() {
     const { signIn } = useAuth();
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '2rem',
-                height: '100vh',
-            }}
-        >
-            <h1 style={{ margin: 0 }}>Monim</h1>
-            <img src={foxLogo} alt="App logo" style={{ width: '8rem', height: '8rem' }} />
+        <div className="sign-in-page">
+            <h1>Monim</h1>
+            <img src={foxLogo} alt="App logo" className="sign-in-logo" />
             <button
                 onClick={signIn}
                 style={{
