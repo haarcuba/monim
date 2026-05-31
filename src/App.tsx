@@ -81,7 +81,9 @@ function AppContent({ user }: { user: User }) {
                         )}
                     </div>
                 ))}
-                <button className="add-counter-btn" onClick={counters.create}>+ counter</button>
+                <button className="add-counter-btn" onClick={counters.create}>
+                    + counter
+                </button>
             </section>
             {counters.shared.length > 0 && (
                 <section id="shared">

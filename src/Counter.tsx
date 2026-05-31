@@ -55,7 +55,9 @@ export function Counter({
                                 data-testid="dec-button"
                                 className="btn-primary btn-icon"
                                 aria-label="Decrement"
-                                onClick={() => onChange?.({ id, count: count - 1, operation: 'dec' })}
+                                onClick={() =>
+                                    onChange?.({ id, count: count - 1, operation: 'dec' })
+                                }
                             >
                                 <MinusIcon />
                             </button>
