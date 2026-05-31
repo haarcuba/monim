@@ -5,7 +5,8 @@ import { db } from '@/firebase';
 export interface HistoryEntry {
     id: string;
     value: number;
-    operation: 'inc' | 'dec' | 'set';
+    name?: string;
+    operation: 'inc' | 'dec' | 'set' | 'name';
     timestamp: firestore.Timestamp | null;
 }
 

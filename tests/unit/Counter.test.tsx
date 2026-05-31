@@ -59,7 +59,7 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter', operation: 'name' });
         expect(reactTesting.screen.queryByTestId('name-input')).not.toBeVisible();
     });
 
@@ -85,7 +85,7 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Renamed Counter' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Renamed Counter', operation: 'name' });
         nameInput = reactTesting.screen.getByTestId('name-input');
         expect(nameInput).not.toBeVisible();
     });
@@ -249,6 +249,6 @@ describe('Counter debouncing', () => {
         });
 
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Second Name' });
+        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Second Name', operation: 'name' });
     });
 });

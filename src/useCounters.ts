@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { User } from 'firebase/auth';
-import * as firestore from 'firebase/firestore';
-import { writeBatch, serverTimestamp } from 'firebase/firestore';
+import * as Firestore from 'firebase/firestore';
 import { db } from '@/firebase';
 import * as Counter from '@/Counter';
 
 interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
-    createdAt: firestore.Timestamp | null;
+    createdAt: Firestore.Timestamp | null;
     sharedWith?: string[];
     ownerUid?: string;
     ownerEmail?: string;
@@ -15,7 +14,7 @@ interface CounterData extends Pick<Counter.Props, 'id' | 'name' | 'count'> {
 
 type SetCounters = Dispatch<SetStateAction<CounterData[]>>;
 
-function _counterData(doc: firestore.DocumentSnapshot): CounterData {
+function _counterData(doc: Firestore.DocumentSnapshot): CounterData {
     return {
         id: doc.id,
         ...doc.data(),
@@ -27,12 +26,12 @@ function _upsertSharedCounter(id: string, data: CounterData, set: SetCounters) {
 }
 
 function _subscribeToSharedCounter(
-    shareDoc: firestore.DocumentSnapshot,
+    shareDoc: Firestore.DocumentSnapshot,
     set: SetCounters
 ): () => void {
     const { ownerUid, ownerEmail } = shareDoc.data() as { ownerUid: string; ownerEmail?: string };
-    const ref = firestore.doc(db, 'users', ownerUid, 'counters', shareDoc.id);
-    return firestore.onSnapshot(ref, (snap) => {
+    const ref = Firestore.doc(db, 'users', ownerUid, 'counters', shareDoc.id);
+    return Firestore.onSnapshot(ref, (snap) => {
         if (!snap.exists()) return;
         _upsertSharedCounter(shareDoc.id, { ..._counterData(snap), ownerUid, ownerEmail }, set);
     });
@@ -40,9 +39,9 @@ function _subscribeToSharedCounter(
 
 function _subscribeToShares(email: string, set: SetCounters): () => void {
     const counterUnsubs = new Map<string, () => void>();
-    const sharesCol = firestore.collection(db, 'shares', email, 'counters');
+    const sharesCol = Firestore.collection(db, 'shares', email, 'counters');
 
-    const unsubShares = firestore.onSnapshot(sharesCol, (snap) => {
+    const unsubShares = Firestore.onSnapshot(sharesCol, (snap) => {
         for (const change of snap.docChanges()) {
             if (change.type === 'added') {
                 if (counterUnsubs.has(change.doc.id)) continue;
@@ -66,9 +65,9 @@ export function useCounters(user: User) {
     const [sharedCounters, setSharedCounters] = useState<CounterData[]>([]);
 
     useEffect(() => {
-        const counters_collection = firestore.collection(db, 'users', user.uid, 'counters');
-        const query = firestore.query(counters_collection, firestore.orderBy('createdAt'));
-        return firestore.onSnapshot(query, (snap) => {
+        const counters_collection = Firestore.collection(db, 'users', user.uid, 'counters');
+        const query = Firestore.query(counters_collection, Firestore.orderBy('createdAt'));
+        return Firestore.onSnapshot(query, (snap) => {
             setOwnCounters(snap.docs.map(_counterData));
         });
     }, [user.uid]);
@@ -79,49 +78,48 @@ export function useCounters(user: User) {
     }, [user.uid, user.email]);
 
     async function create() {
-        const counters_collection = firestore.collection(db, 'users', user.uid, 'counters');
-        await firestore.addDoc(counters_collection, {
+        const counters_collection = Firestore.collection(db, 'users', user.uid, 'counters');
+        await Firestore.addDoc(counters_collection, {
             name: '',
             count: 0,
-            createdAt: firestore.serverTimestamp(),
+            createdAt: Firestore.serverTimestamp(),
         });
     }
 
     async function update(id: string, changes: Counter.Changes) {
         const { operation, ...firestoreChanges } = changes;
-        const counterRef = firestore.doc(db, 'users', user.uid, 'counters', id);
-        if (firestoreChanges.count !== undefined) {
-            const batch = writeBatch(db);
-            batch.update(counterRef, firestoreChanges);
-            const historyRef = firestore.doc(
-                firestore.collection(db, 'users', user.uid, 'counters', id, 'history')
-            );
-            batch.set(historyRef, {
-                value: firestoreChanges.count,
-                operation: operation ?? 'set',
-                timestamp: serverTimestamp(),
-            });
-            await batch.commit();
-        } else {
-            await firestore.updateDoc(counterRef, firestoreChanges);
-        }
+        const counterRef = Firestore.doc(db, 'users', user.uid, 'counters', id);
+        const batch = Firestore.writeBatch(db);
+        batch.update(counterRef, firestoreChanges);
+        const historyRef = Firestore.doc(
+            Firestore.collection(db, 'users', user.uid, 'counters', id, 'history')
+        );
+        const currentValue =
+            firestoreChanges.count ?? ownCounters.find((c) => c.id === id)?.count ?? 0;
+        batch.set(historyRef, {
+            value: currentValue,
+            ...(firestoreChanges.name !== undefined ? { name: firestoreChanges.name } : {}),
+            operation,
+            timestamp: Firestore.serverTimestamp(),
+        });
+        await batch.commit();
     }
 
     async function share(counterId: string, email: string) {
-        await firestore.updateDoc(firestore.doc(db, 'users', user.uid, 'counters', counterId), {
-            sharedWith: firestore.arrayUnion(email),
+        await Firestore.updateDoc(Firestore.doc(db, 'users', user.uid, 'counters', counterId), {
+            sharedWith: Firestore.arrayUnion(email),
         });
-        await firestore.setDoc(firestore.doc(db, 'shares', email, 'counters', counterId), {
+        await Firestore.setDoc(Firestore.doc(db, 'shares', email, 'counters', counterId), {
             ownerUid: user.uid,
             ownerEmail: user.email,
         });
     }
 
     async function unshare(counterId: string, email: string) {
-        await firestore.updateDoc(firestore.doc(db, 'users', user.uid, 'counters', counterId), {
-            sharedWith: firestore.arrayRemove(email),
+        await Firestore.updateDoc(Firestore.doc(db, 'users', user.uid, 'counters', counterId), {
+            sharedWith: Firestore.arrayRemove(email),
         });
-        await firestore.deleteDoc(firestore.doc(db, 'shares', email, 'counters', counterId));
+        await Firestore.deleteDoc(Firestore.doc(db, 'shares', email, 'counters', counterId));
     }
 
     return { own: ownCounters, shared: sharedCounters, create, update, share, unshare };

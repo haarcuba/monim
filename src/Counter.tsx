@@ -5,7 +5,7 @@ import { EditableName } from '@/EditableName';
 export interface Changes {
     name?: string;
     count?: number;
-    operation?: 'inc' | 'dec' | 'set';
+    operation: 'inc' | 'dec' | 'set' | 'name';
 }
 
 type OnChange = (changes: { id: string } & Changes) => void;
@@ -34,7 +34,7 @@ export function Counter({
     debounceMS = 300,
 }: Props) {
     const debouncedOnChange = useDebouncedCallback(
-        (changes: { name?: string; count?: number }) => onChange?.({ id, ...changes }),
+        (changes: Changes) => onChange?.({ id, ...changes }),
         debounceMS
     );
 
@@ -42,7 +42,7 @@ export function Counter({
         <div>
             <EditableName
                 name={name}
-                onChange={(newName) => debouncedOnChange({ name: newName })}
+                onChange={(newName) => debouncedOnChange({ name: newName, operation: 'name' })}
             />
             {name !== '' && (
                 <>

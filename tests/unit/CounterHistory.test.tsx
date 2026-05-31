@@ -15,13 +15,15 @@ function makeEntry(
     id: string,
     operation: HistoryEntry['operation'],
     value: number,
-    secondsAgo: number
+    secondsAgo: number,
+    name?: string
 ): HistoryEntry {
     const ms = Date.now() - secondsAgo * 1000;
     return {
         id,
         operation,
         value,
+        ...(name !== undefined ? { name } : {}),
         timestamp: Timestamp.fromMillis(ms),
     };
 }
@@ -76,6 +78,17 @@ describe('CounterHistory', () => {
         expect(values[0]).toHaveTextContent('5');
         expect(values[1]).toHaveTextContent('4');
         expect(values[2]).toHaveTextContent('10');
+    });
+
+    it('renders a name-change entry with the unchanged numeric counter value', () => {
+        const entry = makeEntry('e1', 'name', 7, 30, 'Bananas');
+        mockUseCounterHistory.mockReturnValue([entry]);
+        reactTesting.render(
+            <CounterHistory counterId="cid" ownerUid="uid" counterName="Apples" onBack={vi.fn()} />
+        );
+
+        expect(reactTesting.screen.getByTestId('history-op')).toHaveTextContent('name');
+        expect(reactTesting.screen.getByTestId('history-value')).toHaveTextContent('7');
     });
 
     it('renders relative and full timestamps for each entry', () => {
