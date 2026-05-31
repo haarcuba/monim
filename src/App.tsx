@@ -7,6 +7,7 @@ import { SignInPage } from '@/SignInPage';
 import { UserAvatar } from '@/UserAvatar';
 import { useCounters } from '@/useCounters';
 import * as ShareModal from '@/ShareModal';
+import { CounterHistory } from '@/CounterHistory';
 
 function App() {
     const { user, loading } = useAuth();
@@ -17,10 +18,31 @@ function App() {
     return <AppContent user={user} />;
 }
 
+interface HistoryTarget {
+    counterId: string;
+    ownerUid: string;
+    counterName: string;
+}
+
 function AppContent({ user }: { user: User }) {
     const counters = useCounters(user);
     const [currentlySharingId, setCurrentlySharing] = useState<string | null>(null);
     const currentlySharing = { get: () => currentlySharingId, set: setCurrentlySharing };
+    const [historyTarget, setHistoryTarget] = useState<HistoryTarget | null>(null);
+
+    if (historyTarget) {
+        return (
+            <>
+                <UserAvatar user={user} />
+                <CounterHistory
+                    counterId={historyTarget.counterId}
+                    ownerUid={historyTarget.ownerUid}
+                    counterName={historyTarget.counterName}
+                    onBack={() => setHistoryTarget(null)}
+                />
+            </>
+        );
+    }
 
     return (
         <>
@@ -34,6 +56,13 @@ function AppContent({ user }: { user: User }) {
                             count={c.count}
                             onChange={(changes) => counters.update(c.id, changes)}
                             onShare={() => currentlySharing.set(c.id)}
+                            onViewHistory={() =>
+                                setHistoryTarget({
+                                    counterId: c.id,
+                                    ownerUid: user.uid,
+                                    counterName: c.name,
+                                })
+                            }
                         />
                         {currentlySharing.get() === c.id && (
                             <ShareModal.ShareModal
@@ -63,6 +92,13 @@ function AppContent({ user }: { user: User }) {
                             count={c.count}
                             isOwner={false}
                             sharedBy={c.ownerEmail}
+                            onViewHistory={() =>
+                                setHistoryTarget({
+                                    counterId: c.id,
+                                    ownerUid: c.ownerUid!,
+                                    counterName: c.name,
+                                })
+                            }
                         />
                     ))}
                 </section>

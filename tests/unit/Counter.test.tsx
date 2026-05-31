@@ -59,7 +59,11 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'My Counter' });
+        expect(onChange).toHaveBeenCalledWith({
+            id: 'mycounter-id',
+            name: 'My Counter',
+            operation: 'name',
+        });
         expect(reactTesting.screen.queryByTestId('name-input')).not.toBeVisible();
     });
 
@@ -85,7 +89,11 @@ describe('Basic functionality', () => {
         });
 
         expect(onChange).toHaveBeenCalledOnce();
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Renamed Counter' });
+        expect(onChange).toHaveBeenCalledWith({
+            id: 'mycounter-id',
+            name: 'Renamed Counter',
+            operation: 'name',
+        });
         nameInput = reactTesting.screen.getByTestId('name-input');
         expect(nameInput).not.toBeVisible();
     });
@@ -181,6 +189,43 @@ describe('View-only mode (isOwner=false)', () => {
     });
 });
 
+describe('View History button', () => {
+    it('shows the View History button for owned counters', () => {
+        reactTesting.render(
+            <Counter.Counter id="mycounter-id" name="My Counter" count={5} isOwner={true} />
+        );
+        expect(reactTesting.screen.getByTestId('view-history-button')).toBeInTheDocument();
+    });
+
+    it('shows the View History button for non-owned (shared) counters', () => {
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={false}
+                sharedBy="owner@example.com"
+            />
+        );
+        expect(reactTesting.screen.getByTestId('view-history-button')).toBeInTheDocument();
+    });
+
+    it('calls onViewHistory when the View History button is clicked', () => {
+        const onViewHistory = vi.fn();
+        reactTesting.render(
+            <Counter.Counter
+                id="mycounter-id"
+                name="My Counter"
+                count={5}
+                isOwner={true}
+                onViewHistory={onViewHistory}
+            />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('view-history-button'));
+        expect(onViewHistory).toHaveBeenCalledOnce();
+    });
+});
+
 describe('Counter debouncing', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -212,6 +257,10 @@ describe('Counter debouncing', () => {
         });
 
         expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({ id: 'mycounter-id', name: 'Second Name' });
+        expect(onChange).toHaveBeenCalledWith({
+            id: 'mycounter-id',
+            name: 'Second Name',
+            operation: 'name',
+        });
     });
 });
