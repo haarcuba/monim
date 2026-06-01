@@ -23,29 +23,41 @@ export function ShareModal({ sharedWith, onShare, onUnshare, onClose }: Props) {
                     ✕
                 </button>
             </div>
-            <div className="share-modal-row">
-                <input
-                    data-testid="share-email-input"
-                    className="share-email-input"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email address"
-                />
-                <button data-testid="share-submit" className="btn-ghost" onClick={handleShare}>
-                    Share
-                </button>
-            </div>
-            <ul className="share-list">
-                {sharedWith.map((email_) => (
-                    <li key={email_} className="share-list-item">
-                        <span>{email_}</span>
-                        <button className="btn-danger" onClick={() => onUnshare(email_)}>
-                            Revoke
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            {_Share(email, setEmail, handleShare)}
+            {_Unshare(sharedWith, onUnshare)}
         </div>
+    );
+}
+
+function _Share(email: string, setEmail: (v: string) => void, onShare: () => void) {
+    return (
+        <div className="share-modal-row">
+            <input
+                data-testid="share-email-input"
+                className="share-email-input"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+            />
+            <button data-testid="share-submit" className="btn-ghost" onClick={onShare}>
+                Share
+            </button>
+        </div>
+    );
+}
+
+function _Unshare(sharedWith: string[], onUnshare: (email: string) => void) {
+    return (
+        <ul className="share-list">
+            {sharedWith.map((email_) => (
+                <li key={email_} className="share-list-item">
+                    <span>{email_}</span>
+                    <button className="btn-danger" onClick={() => onUnshare(email_)}>
+                        Revoke
+                    </button>
+                </li>
+            ))}
+        </ul>
     );
 }
