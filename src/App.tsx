@@ -55,8 +55,10 @@ function AppContent({ user }: { user: User }) {
         <>
             <AppHeader user={user} />
             {_TabBar(activeTab, setActiveTab)}
-            {activeTab === 'counters' && _CountersTab(counters, currentlySharing, setHistoryTarget, user)}
-            {activeTab === 'fastwatches' && _FastWatchesTab(fastwatches, currentlySharingFwId, setCurrentlySharingFw)}
+            {activeTab === 'counters' &&
+                _CountersTab(counters, currentlySharing, setHistoryTarget, user)}
+            {activeTab === 'fastwatches' &&
+                _FastWatchesTab(fastwatches, currentlySharingFwId, setCurrentlySharingFw)}
         </>
     );
 }
