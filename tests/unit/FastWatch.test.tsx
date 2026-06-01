@@ -10,12 +10,7 @@ function makeStartedAt(secondsAgo: number): Timestamp {
 describe('FastWatch idle state', () => {
     it('renders elapsed as 00:00:00 and target as 16:00:00 when freshly created', () => {
         reactTesting.render(
-            <FastWatch
-                id="fw1"
-                targetSeconds={57600}
-                elapsedSeconds={0}
-                startedAt={null}
-            />
+            <FastWatch id="fw1" targetSeconds={57600} elapsedSeconds={0} startedAt={null} />
         );
         expect(reactTesting.screen.getByTestId('elapsed-display')).toHaveTextContent('00:00:00');
         expect(reactTesting.screen.getByTestId('target-display')).toHaveTextContent('16:00:00');

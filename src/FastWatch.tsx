@@ -114,20 +114,12 @@ export function FastWatch({
                         </button>
                     )}
                     {running && (
-                        <button
-                            data-testid="stop-button"
-                            className="btn-ghost"
-                            onClick={onStop}
-                        >
+                        <button data-testid="stop-button" className="btn-ghost" onClick={onStop}>
                             Stop
                         </button>
                     )}
                     {(running || elapsedSeconds > 0) && (
-                        <button
-                            data-testid="reset-button"
-                            className="btn-ghost"
-                            onClick={onReset}
-                        >
+                        <button data-testid="reset-button" className="btn-ghost" onClick={onReset}>
                             Reset
                         </button>
                     )}
