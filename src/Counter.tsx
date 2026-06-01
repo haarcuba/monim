@@ -50,62 +50,14 @@ export function Counter({
             {name !== '' && (
                 <>
                     <div className="counter-row">
-                        {isOwner && (
-                            <button
-                                data-testid="dec-button"
-                                className="btn-primary btn-icon"
-                                aria-label="Decrement"
-                                onClick={() =>
-                                    onChange?.({ id, count: count - 1, operation: 'dec' })
-                                }
-                            >
-                                <MinusIcon />
-                            </button>
-                        )}
+                        {isOwner && _OwnerControls1(id, count, onChange)}
                         <div data-testid="counter" className="counter-value">
                             {count}
                         </div>
-                        {isOwner && (
-                            <>
-                                <button
-                                    data-testid="inc-button"
-                                    className="btn-primary btn-icon"
-                                    aria-label="Increment"
-                                    onClick={() =>
-                                        onChange?.({ id, count: count + 1, operation: 'inc' })
-                                    }
-                                >
-                                    <PlusIcon />
-                                </button>
-                                <SetButton
-                                    onSet={(v) => onChange?.({ id, count: v, operation: 'set' })}
-                                    parse={Number}
-                                    value={count}
-                                />
-                            </>
-                        )}
+                        {isOwner && _OwnerControls2(id, count, onChange)}
                     </div>
                     <div className="counter-actions">
-                        {isOwner && (
-                            <>
-                                <button
-                                    data-testid="share-button"
-                                    className="btn-ghost btn-icon"
-                                    aria-label="Sharing options"
-                                    onClick={onShare}
-                                >
-                                    <ShareIcon />
-                                </button>
-                                <button
-                                    data-testid="delete-button"
-                                    className="btn-danger btn-icon"
-                                    aria-label="Delete counter"
-                                    onClick={onDelete}
-                                >
-                                    <TrashIcon />
-                                </button>
-                            </>
-                        )}
+                        {isOwner && _OwnerActions(onShare, onDelete)}
                         {sharedBy && (
                             <small data-testid="shared-by" className="shared-by">
                                 {sharedBy}
@@ -123,5 +75,61 @@ export function Counter({
                 </>
             )}
         </div>
+    );
+}
+
+function _OwnerControls1(id: string, count: number, onChange?: OnChange) {
+    return (
+        <button
+            data-testid="dec-button"
+            className="btn-primary btn-icon"
+            aria-label="Decrement"
+            onClick={() => onChange?.({ id, count: count - 1, operation: 'dec' })}
+        >
+            <MinusIcon />
+        </button>
+    );
+}
+
+function _OwnerControls2(id: string, count: number, onChange?: OnChange) {
+    return (
+        <>
+            <button
+                data-testid="inc-button"
+                className="btn-primary btn-icon"
+                aria-label="Increment"
+                onClick={() => onChange?.({ id, count: count + 1, operation: 'inc' })}
+            >
+                <PlusIcon />
+            </button>
+            <SetButton
+                onSet={(v) => onChange?.({ id, count: v, operation: 'set' })}
+                parse={Number}
+                value={count}
+            />
+        </>
+    );
+}
+
+function _OwnerActions(onShare?: () => void, onDelete?: () => void) {
+    return (
+        <>
+            <button
+                data-testid="share-button"
+                className="btn-ghost btn-icon"
+                aria-label="Sharing options"
+                onClick={onShare}
+            >
+                <ShareIcon />
+            </button>
+            <button
+                data-testid="delete-button"
+                className="btn-danger btn-icon"
+                aria-label="Delete counter"
+                onClick={onDelete}
+            >
+                <TrashIcon />
+            </button>
+        </>
     );
 }
