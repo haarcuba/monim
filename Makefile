@@ -1,4 +1,4 @@
-publish:
+production:
 	git mv docs/CNAME CNAME
 	git rm -r docs/
 	rm -fr dist/
