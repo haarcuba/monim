@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react';
+import { useState, useEffect, type ReactElement } from 'react';
 import './App.css';
 import type { User } from 'firebase/auth';
 import { useAuth } from '@/AuthContext';
@@ -21,6 +21,17 @@ function App() {
 
 type Tab = 'counters' | 'fastwatches';
 
+function useHistoryBack(active: boolean, onBack: () => void) {
+    useEffect(() => {
+        if (active) history.pushState({ historyView: true }, '');
+    }, [active]);
+
+    useEffect(() => {
+        window.addEventListener('popstate', onBack);
+        return () => window.removeEventListener('popstate', onBack);
+    }, [onBack]);
+}
+
 function AppContent({ user }: { user: User }) {
     const counters = useCounters(user);
     const fastwatches = useFastWatches(user);
@@ -30,6 +41,8 @@ function AppContent({ user }: { user: User }) {
     const [historyTarget, setHistoryTarget] = useState<Counters.HistoryTarget | null>(null);
     const [currentlySharingFwId, setCurrentlySharingFw] = useState<string | null>(null);
 
+    useHistoryBack(historyTarget !== null, () => setHistoryTarget(null));
+
     if (historyTarget) {
         return (
             <>
@@ -38,7 +51,7 @@ function AppContent({ user }: { user: User }) {
                     counterId={historyTarget.counterId}
                     ownerUid={historyTarget.ownerUid}
                     counterName={historyTarget.counterName}
-                    onBack={() => setHistoryTarget(null)}
+                    onBack={() => history.back()}
                 />
             </>
         );
