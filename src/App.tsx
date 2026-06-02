@@ -30,17 +30,22 @@ function AppContent({ user }: { user: User }) {
     const [historyTarget, setHistoryTarget] = useState<Counters.HistoryTarget | null>(null);
     const [currentlySharingFwId, setCurrentlySharingFw] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (historyTarget !== null) {
-            history.pushState({ historyView: true }, '');
-        }
-    }, [historyTarget]);
+    function _backButtonWorksForHistoryView() {
+        useEffect(() => {
+            if (historyTarget !== null) {
+                history.pushState({ historyView: true }, '');
+            }
+        }, [historyTarget]);
 
-    useEffect(() => {
-        const handlePopState = () => setHistoryTarget(null);
-        window.addEventListener('popstate', handlePopState);
-        return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
+        useEffect(() => {
+            const handlePopState = () => setHistoryTarget(null);
+            window.addEventListener('popstate', handlePopState);
+            return () => window.removeEventListener('popstate', handlePopState);
+        }, []);
+
+    }
+    _backButtonWorksForHistoryView();
+
 
     if (historyTarget) {
         return (
