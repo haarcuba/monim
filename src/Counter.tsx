@@ -58,7 +58,7 @@ export function Counter({
                         {isOwner && _OwnerControls2(id, count, onChange)}
                     </div>
                     <div className="counter-actions">
-                        {isOwner && _OwnerActions(onShare, onDelete)}
+                        {isOwner && CommonButtons.ShareDelete(onShare, onDelete)}
                         {sharedBy && (
                             <small data-testid="shared-by" className="shared-by">
                                 {sharedBy}
@@ -110,8 +110,4 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange) {
             />
         </>
     );
-}
-
-function _OwnerActions(onShare?: () => void, onDelete?: () => void) {
-    return CommonButtons.ShareDelete(onShare, onDelete);
 }
