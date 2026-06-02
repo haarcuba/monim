@@ -9,11 +9,6 @@ export function Item(
     currentlySharingFwId: string | null,
     setCurrentlySharingFw: (id: string | null) => void
 ): ReactElement {
-    function onStop() {
-        const elapsed =
-            fw.elapsedSeconds + (fw.startedAt ? (Date.now() - fw.startedAt.toMillis()) / 1000 : 0);
-        fastwatches.stop(fw.id, elapsed);
-    }
     function onShare(email: string) {
         fastwatches.share(fw.id, email);
         setCurrentlySharingFw(null);
@@ -30,10 +25,7 @@ export function Item(
             <FastWatch
                 id={fw.id}
                 targetSeconds={fw.targetSeconds}
-                elapsedSeconds={fw.elapsedSeconds}
                 startedAt={fw.startedAt}
-                onStart={() => fastwatches.start(fw.id)}
-                onStop={onStop}
                 onReset={() => fastwatches.reset(fw.id)}
                 onDelete={() => fastwatches.destroy(fw.id)}
                 onShare={() => setCurrentlySharingFw(fw.id)}
@@ -57,7 +49,6 @@ export function SharedItem(fw: ReturnType<typeof useFastWatches>['shared'][numbe
             <FastWatch
                 id={fw.id}
                 targetSeconds={fw.targetSeconds}
-                elapsedSeconds={fw.elapsedSeconds}
                 startedAt={fw.startedAt}
                 isOwner={false}
                 sharedBy={fw.ownerEmail}

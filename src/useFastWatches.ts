@@ -7,7 +7,6 @@ import { db } from '@/firebase';
 export interface FastWatchData {
     id: string;
     targetSeconds: number;
-    elapsedSeconds: number;
     startedAt: Firestore.Timestamp | null;
     sharedWith?: string[];
     ownerUid?: string;
@@ -80,29 +79,15 @@ export function useFastWatches(user: User) {
         const col = Firestore.collection(db, 'users', user.uid, 'fastwatches');
         await Firestore.addDoc(col, {
             targetSeconds: 57600,
-            elapsedSeconds: 0,
-            startedAt: null,
+            startedAt: Firestore.serverTimestamp(),
             createdAt: Firestore.serverTimestamp(),
             sharedWith: [],
         });
     }
 
-    async function start(id: string) {
-        const ref = Firestore.doc(db, 'users', user.uid, 'fastwatches', id);
-        await Firestore.updateDoc(ref, { startedAt: Firestore.serverTimestamp() });
-    }
-
-    async function stop(id: string, currentElapsed: number) {
-        const ref = Firestore.doc(db, 'users', user.uid, 'fastwatches', id);
-        await Firestore.updateDoc(ref, {
-            elapsedSeconds: Math.floor(currentElapsed),
-            startedAt: null,
-        });
-    }
-
     async function reset(id: string) {
         const ref = Firestore.doc(db, 'users', user.uid, 'fastwatches', id);
-        await Firestore.updateDoc(ref, { elapsedSeconds: 0, startedAt: null });
+        await Firestore.updateDoc(ref, { startedAt: Firestore.serverTimestamp() });
     }
 
     async function setTarget(id: string, seconds: number) {
@@ -141,8 +126,6 @@ export function useFastWatches(user: User) {
         own: ownFastWatches,
         shared: sharedFastWatches,
         create,
-        start,
-        stop,
         reset,
         setTarget,
         share,

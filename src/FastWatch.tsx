@@ -5,12 +5,9 @@ import * as CommonButtons from '@/CommonButtons';
 export interface Props {
     id: string;
     targetSeconds: number;
-    elapsedSeconds: number;
     startedAt: Timestamp | null;
     isOwner?: boolean;
     sharedBy?: string;
-    onStart?: () => void;
-    onStop?: () => void;
     onReset?: () => void;
     onDelete?: () => void;
     onShare?: () => void;
@@ -27,12 +24,9 @@ function _formatTime(totalSeconds: number): string {
 
 export function FastWatch({
     targetSeconds,
-    elapsedSeconds,
     startedAt,
     isOwner = true,
     sharedBy,
-    onStart,
-    onStop,
     onReset,
     onDelete,
     onShare,
@@ -50,9 +44,7 @@ export function FastWatch({
         return () => clearInterval(id);
     }, [running]);
 
-    const currentElapsed = running
-        ? elapsedSeconds + (now - startedAt!.toMillis()) / 1000
-        : elapsedSeconds;
+    const currentElapsed = running ? (now - startedAt!.toMillis()) / 1000 : 0;
     const reached = currentElapsed >= targetSeconds;
 
     function commitTarget() {
@@ -75,7 +67,7 @@ export function FastWatch({
                 setTargetEditing,
                 commitTarget
             )}
-            {isOwner && _Controls(running, elapsedSeconds, onStart, onStop, onReset)}
+            {isOwner && _Controls(onReset)}
             {_Actions(isOwner, onShare, onDelete, sharedBy)}
         </div>
     );
@@ -130,30 +122,12 @@ function _TimeRow(
     );
 }
 
-function _Controls(
-    running: boolean,
-    elapsedSeconds: number,
-    onStart?: () => void,
-    onStop?: () => void,
-    onReset?: () => void
-) {
+function _Controls(onReset?: () => void) {
     return (
         <div className="fastwatch-controls">
-            {!running && (
-                <button data-testid="start-button" className="btn-primary" onClick={onStart}>
-                    Start
-                </button>
-            )}
-            {running && (
-                <button data-testid="stop-button" className="btn-ghost" onClick={onStop}>
-                    Stop
-                </button>
-            )}
-            {(running || elapsedSeconds > 0) && (
-                <button data-testid="reset-button" className="btn-ghost" onClick={onReset}>
-                    Reset
-                </button>
-            )}
+            <button data-testid="reset-button" className="btn-ghost" onClick={onReset}>
+                Reset
+            </button>
         </div>
     );
 }
