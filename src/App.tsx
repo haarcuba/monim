@@ -91,39 +91,9 @@ function _CountersTab(
     return (
         <>
             <section id="center">
-                {counters.own.map((c) => (
-                    <div key={c.id} className="counter-item">
-                        <Counter.Counter
-                            id={c.id}
-                            name={c.name}
-                            count={c.count}
-                            onChange={(changes) => counters.update(c.id, changes)}
-                            onShare={() => currentlySharing.set(c.id)}
-                            onDelete={() => counters.destroy(c.id)}
-                            onViewHistory={() =>
-                                setHistoryTarget({
-                                    counterId: c.id,
-                                    ownerUid: user.uid,
-                                    counterName: c.name,
-                                })
-                            }
-                        />
-                        {currentlySharing.get() === c.id && (
-                            <ShareModal.ShareModal
-                                sharedWith={c.sharedWith ?? []}
-                                onShare={(email) => {
-                                    counters.share(c.id, email);
-                                    currentlySharing.set(null);
-                                }}
-                                onUnshare={(email) => {
-                                    counters.unshare(c.id, email);
-                                    currentlySharing.set(null);
-                                }}
-                                onClose={() => currentlySharing.set(null)}
-                            />
-                        )}
-                    </div>
-                ))}
+                {counters.own.map((c) =>
+                    _CounterItem(c, counters, currentlySharing, setHistoryTarget, user)
+                )}
                 <button className="add-counter-btn" onClick={counters.create}>
                     + counter
                 </button>
@@ -163,43 +133,9 @@ function _FastWatchesTab(
     return (
         <>
             <section id="center">
-                {fastwatches.own.map((fw) => (
-                    <div key={fw.id} className="counter-item">
-                        <FastWatch
-                            id={fw.id}
-                            targetSeconds={fw.targetSeconds}
-                            elapsedSeconds={fw.elapsedSeconds}
-                            startedAt={fw.startedAt}
-                            onStart={() => fastwatches.start(fw.id)}
-                            onStop={() => {
-                                const elapsed =
-                                    fw.elapsedSeconds +
-                                    (fw.startedAt
-                                        ? (Date.now() - fw.startedAt.toMillis()) / 1000
-                                        : 0);
-                                fastwatches.stop(fw.id, elapsed);
-                            }}
-                            onReset={() => fastwatches.reset(fw.id)}
-                            onDelete={() => fastwatches.destroy(fw.id)}
-                            onShare={() => setCurrentlySharingFw(fw.id)}
-                            onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
-                        />
-                        {currentlySharingFwId === fw.id && (
-                            <ShareModal.ShareModal
-                                sharedWith={fw.sharedWith ?? []}
-                                onShare={(email) => {
-                                    fastwatches.share(fw.id, email);
-                                    setCurrentlySharingFw(null);
-                                }}
-                                onUnshare={(email) => {
-                                    fastwatches.unshare(fw.id, email);
-                                    setCurrentlySharingFw(null);
-                                }}
-                                onClose={() => setCurrentlySharingFw(null)}
-                            />
-                        )}
-                    </div>
-                ))}
+                {fastwatches.own.map((fw) =>
+                    _FastWatchItem(fw, fastwatches, currentlySharingFwId, setCurrentlySharingFw)
+                )}
                 <button className="add-counter-btn" onClick={fastwatches.create}>
                     + fastwatch
                 </button>
@@ -222,6 +158,111 @@ function _FastWatchesTab(
                 </section>
             )}
         </>
+    );
+}
+
+function _CounterItem(
+    c: ReturnType<typeof useCounters>['own'][number],
+    counters: ReturnType<typeof useCounters>,
+    currentlySharing: { get: () => string | null; set: (id: string | null) => void },
+    setHistoryTarget: (target: HistoryTarget | null) => void,
+    user: User
+) {
+    return (
+        <div key={c.id} className="counter-item">
+            <Counter.Counter
+                id={c.id}
+                name={c.name}
+                count={c.count}
+                onChange={(changes) => counters.update(c.id, changes)}
+                onShare={() => currentlySharing.set(c.id)}
+                onDelete={() => counters.destroy(c.id)}
+                onViewHistory={() =>
+                    setHistoryTarget({
+                        counterId: c.id,
+                        ownerUid: user.uid,
+                        counterName: c.name,
+                    })
+                }
+            />
+            {_CounterShareModal(c, counters, currentlySharing)}
+        </div>
+    );
+}
+
+function _CounterShareModal(
+    c: ReturnType<typeof useCounters>['own'][number],
+    counters: ReturnType<typeof useCounters>,
+    currentlySharing: { get: () => string | null; set: (id: string | null) => void }
+) {
+    if (currentlySharing.get() !== c.id) return null;
+    return (
+        <ShareModal.ShareModal
+            sharedWith={c.sharedWith ?? []}
+            onShare={(email) => {
+                counters.share(c.id, email);
+                currentlySharing.set(null);
+            }}
+            onUnshare={(email) => {
+                counters.unshare(c.id, email);
+                currentlySharing.set(null);
+            }}
+            onClose={() => currentlySharing.set(null)}
+        />
+    );
+}
+
+function _FastWatchItem(
+    fw: ReturnType<typeof useFastWatches>['own'][number],
+    fastwatches: ReturnType<typeof useFastWatches>,
+    currentlySharingFwId: string | null,
+    setCurrentlySharingFw: (id: string | null) => void
+) {
+    function onStop() {
+        const elapsed =
+            fw.elapsedSeconds +
+            (fw.startedAt ? (Date.now() - fw.startedAt.toMillis()) / 1000 : 0);
+        fastwatches.stop(fw.id, elapsed);
+    }
+    return (
+        <div key={fw.id} className="counter-item">
+            <FastWatch
+                id={fw.id}
+                targetSeconds={fw.targetSeconds}
+                elapsedSeconds={fw.elapsedSeconds}
+                startedAt={fw.startedAt}
+                onStart={() => fastwatches.start(fw.id)}
+                onStop={onStop}
+                onReset={() => fastwatches.reset(fw.id)}
+                onDelete={() => fastwatches.destroy(fw.id)}
+                onShare={() => setCurrentlySharingFw(fw.id)}
+                onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
+            />
+            {_FastWatchShareModal(fw, fastwatches, currentlySharingFwId, setCurrentlySharingFw)}
+        </div>
+    );
+}
+
+function _FastWatchShareModal(
+    fw: ReturnType<typeof useFastWatches>['own'][number],
+    fastwatches: ReturnType<typeof useFastWatches>,
+    currentlySharingFwId: string | null,
+    setCurrentlySharingFw: (id: string | null) => void
+) {
+    if (currentlySharingFwId !== fw.id) return null;
+    return (
+        <ShareModal.ShareModal
+            sharedWith={fw.sharedWith ?? []}
+            onShare={(email) => {
+                fastwatches.share(fw.id, email);
+                setCurrentlySharingFw(null);
+            }}
+            onUnshare={(email) => {
+                fastwatches.unshare(fw.id, email);
+                setCurrentlySharingFw(null);
+            }}
+            onClose={() => setCurrentlySharingFw(null)}
+        />
     );
 }
 
