@@ -32,7 +32,9 @@ export function CounterHistory({ counterId, ownerUid, counterName, onBack }: Pro
                             <td data-testid="history-op">{e.operation}</td>
                             <td data-testid="history-value">{e.value}</td>
                             <td data-testid="history-relative">{_relativeTime(e.timestamp)}</td>
-                            <td data-testid="history-full">{_fullTime(e.timestamp)}</td>
+                            <td data-testid="history-full">
+                                <code>{_fullTime(e.timestamp)}</code>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -41,9 +43,9 @@ export function CounterHistory({ counterId, ownerUid, counterName, onBack }: Pro
     );
 }
 
-function _relativeTime(ts: Timestamp | null): string {
-    if (!ts) return '—';
-    const diffMs = ts.toMillis() - Date.now();
+function _relativeTime(timestamp: Timestamp | null): string {
+    if (!timestamp) return '—';
+    const diffMs = timestamp.toMillis() - Date.now();
     const absDiffMs = Math.abs(diffMs);
 
     const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
@@ -65,7 +67,12 @@ function _relativeTime(ts: Timestamp | null): string {
     return rtf.format(0, 'second');
 }
 
-function _fullTime(ts: Timestamp | null): string {
-    if (!ts) return '—';
-    return ts.toDate().toLocaleString();
+function _fullTime(timestamp: Timestamp | null): string {
+    if (!timestamp) return '—';
+    const date = timestamp.toDate();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return (
+        `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+        `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+    );
 }
