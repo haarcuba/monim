@@ -6,11 +6,16 @@ import { db } from '@/firebase';
 
 export interface FastWatchData {
     id: string;
+    name: string;
     targetSeconds: number;
     startedAt: Firestore.Timestamp | null;
     sharedWith?: string[];
     ownerUid?: string;
     ownerEmail?: string;
+}
+
+function _defaultName(): string {
+    return 'FastWatch ' + Math.random().toString(16).slice(2, 6);
 }
 
 type SetFastWatches = Dispatch<SetStateAction<FastWatchData[]>>;
@@ -78,11 +83,17 @@ export function useFastWatches(user: User) {
     async function create() {
         const col = Firestore.collection(db, 'users', user.uid, 'fastwatches');
         await Firestore.addDoc(col, {
+            name: _defaultName(),
             targetSeconds: 57600,
             startedAt: Firestore.serverTimestamp(),
             createdAt: Firestore.serverTimestamp(),
             sharedWith: [],
         });
+    }
+
+    async function rename(id: string, name: string) {
+        const ref = Firestore.doc(db, 'users', user.uid, 'fastwatches', id);
+        await Firestore.updateDoc(ref, { name });
     }
 
     async function reset(id: string) {
@@ -127,6 +138,7 @@ export function useFastWatches(user: User) {
         shared: sharedFastWatches,
         create,
         reset,
+        rename,
         setTarget,
         share,
         unshare,

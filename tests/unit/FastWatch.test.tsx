@@ -7,6 +7,21 @@ function makeStartedAt(secondsAgo: number): Timestamp {
     return Timestamp.fromMillis(Date.now() - secondsAgo * 1000);
 }
 
+const confirmMethods = [
+    {
+        label: 'Enter key',
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.keyDown(input, { key: 'Enter' });
+        },
+    },
+    {
+        label: 'blur',
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.blur(input);
+        },
+    },
+];
+
 describe('FastWatch running state', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -17,7 +32,9 @@ describe('FastWatch running state', () => {
 
     it('elapsed ticks up each second while running', async () => {
         const startedAt = makeStartedAt(5);
-        reactTesting.render(<FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />);
+        reactTesting.render(
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
+        );
         const before = reactTesting.screen.getByTestId('elapsed-display').textContent;
 
         await reactTesting.act(async () => {
@@ -31,7 +48,7 @@ describe('FastWatch running state', () => {
     it('has orange color class before target reached', () => {
         const startedAt = makeStartedAt(10);
         const { container } = reactTesting.render(
-            <FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
         );
         expect(container.firstChild).toHaveClass('fastwatch-card');
         expect(container.firstChild).not.toHaveClass('fastwatch-reached');
@@ -40,7 +57,7 @@ describe('FastWatch running state', () => {
     it('has green color class after target reached', async () => {
         const startedAt = makeStartedAt(57599);
         const { container } = reactTesting.render(
-            <FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
         );
         expect(container.firstChild).not.toHaveClass('fastwatch-reached');
 
@@ -58,6 +75,7 @@ describe('FastWatch controls', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(3600)}
                 onReset={onReset}
@@ -72,6 +90,7 @@ describe('FastWatch controls', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 onDelete={onDelete}
@@ -81,40 +100,27 @@ describe('FastWatch controls', () => {
         expect(onDelete).toHaveBeenCalledOnce();
     });
 
-    it('calls onSetTarget with seconds when target is updated via input (Enter)', () => {
-        const onSetTarget = vi.fn();
-        reactTesting.render(
-            <FastWatch
-                id="fw1"
-                targetSeconds={57600}
-                startedAt={makeStartedAt(0)}
-                onSetTarget={onSetTarget}
-            />
-        );
-        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
-        const input = reactTesting.screen.getByTestId('set-target-input');
-        reactTesting.fireEvent.change(input, { target: { value: '18' } });
-        reactTesting.fireEvent.keyDown(input, { key: 'Enter' });
-        expect(onSetTarget).toHaveBeenCalledOnce();
-        expect(onSetTarget).toHaveBeenCalledWith(18 * 3600);
-    });
-
-    it('calls onSetTarget with seconds when target is updated via input (blur)', () => {
-        const onSetTarget = vi.fn();
-        reactTesting.render(
-            <FastWatch
-                id="fw1"
-                targetSeconds={57600}
-                startedAt={makeStartedAt(0)}
-                onSetTarget={onSetTarget}
-            />
-        );
-        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
-        const input = reactTesting.screen.getByTestId('set-target-input');
-        reactTesting.fireEvent.change(input, { target: { value: '20' } });
-        reactTesting.fireEvent.blur(input);
-        expect(onSetTarget).toHaveBeenCalledWith(20 * 3600);
-    });
+    it.each(confirmMethods)(
+        'calls onSetTarget with seconds when target is updated via input ($label)',
+        ({ confirm }) => {
+            const onSetTarget = vi.fn();
+            reactTesting.render(
+                <FastWatch
+                    id="fw1"
+                    name="Test Fast"
+                    targetSeconds={57600}
+                    startedAt={makeStartedAt(0)}
+                    onSetTarget={onSetTarget}
+                />
+            );
+            reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
+            const input = reactTesting.screen.getByTestId('set-target-input');
+            reactTesting.fireEvent.change(input, { target: { value: '18' } });
+            confirm(input);
+            expect(onSetTarget).toHaveBeenCalledOnce();
+            expect(onSetTarget).toHaveBeenCalledWith(18 * 3600);
+        }
+    );
 });
 
 describe('FastWatch view-only mode (isOwner=false)', () => {
@@ -122,6 +128,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -136,6 +143,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -149,6 +157,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(3600)}
                 isOwner={false}
@@ -163,6 +172,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -171,4 +181,55 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         );
         expect(reactTesting.screen.queryByTestId('set-target-button')).not.toBeInTheDocument();
     });
+});
+
+describe('FastWatch name', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it.each([
+        { label: 'owner', isOwner: true },
+        { label: 'viewer', isOwner: false, sharedBy: 'owner@example.com' },
+    ])('displays the name ($label)', ({ isOwner, sharedBy }) => {
+        reactTesting.render(
+            <FastWatch
+                id="fw1"
+                name="My Fast"
+                targetSeconds={57600}
+                startedAt={makeStartedAt(0)}
+                isOwner={isOwner}
+                sharedBy={sharedBy}
+            />
+        );
+        expect(reactTesting.screen.getByText('My Fast')).toBeInTheDocument();
+    });
+
+    it.each(confirmMethods)(
+        'calls onRename when name is committed ($label)',
+        async ({ confirm }) => {
+            const onRename = vi.fn();
+            reactTesting.render(
+                <FastWatch
+                    id="fw1"
+                    name="My Fast"
+                    targetSeconds={57600}
+                    startedAt={null}
+                    onRename={onRename}
+                />
+            );
+            reactTesting.fireEvent.click(reactTesting.screen.getByText('My Fast'));
+            const input = reactTesting.screen.getByTestId('name-input');
+            reactTesting.fireEvent.change(input, { target: { value: 'New Name' } });
+            confirm(input);
+            await reactTesting.act(async () => {
+                vi.runAllTimers();
+            });
+            expect(onRename).toHaveBeenCalledOnce();
+            expect(onRename).toHaveBeenCalledWith('New Name');
+        }
+    );
 });

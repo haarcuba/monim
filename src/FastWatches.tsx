@@ -24,12 +24,14 @@ export function Item(
         <div key={fw.id} className="counter-item">
             <FastWatch
                 id={fw.id}
+                name={fw.name}
                 targetSeconds={fw.targetSeconds}
                 startedAt={fw.startedAt}
                 onReset={() => fastwatches.reset(fw.id)}
                 onDelete={() => fastwatches.destroy(fw.id)}
                 onShare={() => setCurrentlySharingFw(fw.id)}
                 onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
+                onRename={(name) => fastwatches.rename(fw.id, name)}
             />
             {_ShareModal(
                 fw.id,
@@ -48,6 +50,7 @@ export function SharedItem(fw: ReturnType<typeof useFastWatches>['shared'][numbe
         <div key={fw.id} className="counter-item">
             <FastWatch
                 id={fw.id}
+                name={fw.name}
                 targetSeconds={fw.targetSeconds}
                 startedAt={fw.startedAt}
                 isOwner={false}

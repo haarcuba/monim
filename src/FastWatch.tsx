@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import type { Timestamp } from 'firebase/firestore';
 import * as CommonButtons from '@/CommonButtons';
+import { EditableName } from '@/EditableName';
 
 export interface Props {
     id: string;
+    name: string;
     targetSeconds: number;
     startedAt: Timestamp | null;
     isOwner?: boolean;
     sharedBy?: string;
+    onRename?: (name: string) => void;
     onReset?: () => void;
     onDelete?: () => void;
     onShare?: () => void;
     onSetTarget?: (seconds: number) => void;
+    debounceMS?: number;
 }
 
 function _formatTime(totalSeconds: number): string {
@@ -23,15 +28,22 @@ function _formatTime(totalSeconds: number): string {
 }
 
 export function FastWatch({
+    name,
     targetSeconds,
     startedAt,
     isOwner = true,
     sharedBy,
+    onRename,
     onReset,
     onDelete,
     onShare,
     onSetTarget,
+    debounceMS = 300,
 }: Props) {
+    const debouncedOnRename = useDebouncedCallback(
+        (newName: string) => onRename?.(newName),
+        debounceMS
+    );
     const [now, setNow] = useState(() => Date.now());
     const [targetEditing, setTargetEditing] = useState(false);
     const [targetInput, setTargetInput] = useState('');
@@ -57,6 +69,7 @@ export function FastWatch({
 
     return (
         <div className={`fastwatch-card${reached ? ' fastwatch-reached' : ''}`}>
+            {_Name(name, isOwner, debouncedOnRename)}
             {_TimeRow(
                 currentElapsed,
                 targetSeconds,
@@ -130,6 +143,13 @@ function _Controls(onReset?: () => void) {
             </button>
         </div>
     );
+}
+
+function _Name(name: string, isOwner: boolean, onRename: (name: string) => void) {
+    if (isOwner) {
+        return <EditableName name={name} onChange={onRename} />;
+    }
+    return <div className="fastwatch-name">{name}</div>;
 }
 
 function _Actions(
