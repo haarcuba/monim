@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react';
+import { useState, useEffect, type ReactElement } from 'react';
 import './App.css';
 import type { User } from 'firebase/auth';
 import { useAuth } from '@/AuthContext';
@@ -30,6 +30,18 @@ function AppContent({ user }: { user: User }) {
     const [historyTarget, setHistoryTarget] = useState<Counters.HistoryTarget | null>(null);
     const [currentlySharingFwId, setCurrentlySharingFw] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (historyTarget !== null) {
+            history.pushState({ historyView: true }, '');
+        }
+    }, [historyTarget]);
+
+    useEffect(() => {
+        const handlePopState = () => setHistoryTarget(null);
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
     if (historyTarget) {
         return (
             <>
@@ -38,7 +50,7 @@ function AppContent({ user }: { user: User }) {
                     counterId={historyTarget.counterId}
                     ownerUid={historyTarget.ownerUid}
                     counterName={historyTarget.counterName}
-                    onBack={() => setHistoryTarget(null)}
+                    onBack={() => history.back()}
                 />
             </>
         );
