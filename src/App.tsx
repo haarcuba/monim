@@ -146,6 +146,9 @@ function _CounterItem(
     setHistoryTarget: (target: HistoryTarget | null) => void,
     user: User
 ) {
+    function onShare(email: string) { counters.share(c.id, email); currentlySharing.set(null); }
+    function onUnshare(email: string) { counters.unshare(c.id, email); currentlySharing.set(null); }
+    function onClose() { currentlySharing.set(null); }
     return (
         <div key={c.id} className="counter-item">
             <Counter.Counter
@@ -163,30 +166,8 @@ function _CounterItem(
                     })
                 }
             />
-            {_CounterShareModal(c, counters, currentlySharing)}
+            {_ShareModal(c.id, c.sharedWith ?? [], currentlySharing.get(), onShare, onUnshare, onClose)}
         </div>
-    );
-}
-
-function _CounterShareModal(
-    c: ReturnType<typeof useCounters>['own'][number],
-    counters: ReturnType<typeof useCounters>,
-    currentlySharing: { get: () => string | null; set: (id: string | null) => void }
-) {
-    if (currentlySharing.get() !== c.id) return null;
-    return (
-        <ShareModal.ShareModal
-            sharedWith={c.sharedWith ?? []}
-            onShare={(email) => {
-                counters.share(c.id, email);
-                currentlySharing.set(null);
-            }}
-            onUnshare={(email) => {
-                counters.unshare(c.id, email);
-                currentlySharing.set(null);
-            }}
-            onClose={() => currentlySharing.set(null)}
-        />
     );
 }
 
@@ -202,6 +183,9 @@ function _FastWatchItem(
             (fw.startedAt ? (Date.now() - fw.startedAt.toMillis()) / 1000 : 0);
         fastwatches.stop(fw.id, elapsed);
     }
+    function onShare(email: string) { fastwatches.share(fw.id, email); setCurrentlySharingFw(null); }
+    function onUnshare(email: string) { fastwatches.unshare(fw.id, email); setCurrentlySharingFw(null); }
+    function onClose() { setCurrentlySharingFw(null); }
     return (
         <div key={fw.id} className="counter-item">
             <FastWatch
@@ -216,30 +200,26 @@ function _FastWatchItem(
                 onShare={() => setCurrentlySharingFw(fw.id)}
                 onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
             />
-            {_FastWatchShareModal(fw, fastwatches, currentlySharingFwId, setCurrentlySharingFw)}
+            {_ShareModal(fw.id, fw.sharedWith ?? [], currentlySharingFwId, onShare, onUnshare, onClose)}
         </div>
     );
 }
 
-function _FastWatchShareModal(
-    fw: ReturnType<typeof useFastWatches>['own'][number],
-    fastwatches: ReturnType<typeof useFastWatches>,
-    currentlySharingFwId: string | null,
-    setCurrentlySharingFw: (id: string | null) => void
+function _ShareModal(
+    id: string,
+    sharedWith: string[],
+    currentlySharingId: string | null,
+    onShare: (email: string) => void,
+    onUnshare: (email: string) => void,
+    onClose: () => void
 ) {
-    if (currentlySharingFwId !== fw.id) return null;
+    if (currentlySharingId !== id) return null;
     return (
         <ShareModal.ShareModal
-            sharedWith={fw.sharedWith ?? []}
-            onShare={(email) => {
-                fastwatches.share(fw.id, email);
-                setCurrentlySharingFw(null);
-            }}
-            onUnshare={(email) => {
-                fastwatches.unshare(fw.id, email);
-                setCurrentlySharingFw(null);
-            }}
-            onClose={() => setCurrentlySharingFw(null)}
+            sharedWith={sharedWith}
+            onShare={onShare}
+            onUnshare={onUnshare}
+            onClose={onClose}
         />
     );
 }
