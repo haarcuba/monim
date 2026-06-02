@@ -11,13 +11,20 @@ export function Item(
 ): ReactElement {
     function onStop() {
         const elapsed =
-            fw.elapsedSeconds +
-            (fw.startedAt ? (Date.now() - fw.startedAt.toMillis()) / 1000 : 0);
+            fw.elapsedSeconds + (fw.startedAt ? (Date.now() - fw.startedAt.toMillis()) / 1000 : 0);
         fastwatches.stop(fw.id, elapsed);
     }
-    function onShare(email: string) { fastwatches.share(fw.id, email); setCurrentlySharingFw(null); }
-    function onUnshare(email: string) { fastwatches.unshare(fw.id, email); setCurrentlySharingFw(null); }
-    function onClose() { setCurrentlySharingFw(null); }
+    function onShare(email: string) {
+        fastwatches.share(fw.id, email);
+        setCurrentlySharingFw(null);
+    }
+    function onUnshare(email: string) {
+        fastwatches.unshare(fw.id, email);
+        setCurrentlySharingFw(null);
+    }
+    function onClose() {
+        setCurrentlySharingFw(null);
+    }
     return (
         <div key={fw.id} className="counter-item">
             <FastWatch
@@ -32,14 +39,19 @@ export function Item(
                 onShare={() => setCurrentlySharingFw(fw.id)}
                 onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
             />
-            {_ShareModal(fw.id, fw.sharedWith ?? [], currentlySharingFwId, onShare, onUnshare, onClose)}
+            {_ShareModal(
+                fw.id,
+                fw.sharedWith ?? [],
+                currentlySharingFwId,
+                onShare,
+                onUnshare,
+                onClose
+            )}
         </div>
     );
 }
 
-export function SharedItem(
-    fw: ReturnType<typeof useFastWatches>['shared'][number]
-): ReactElement {
+export function SharedItem(fw: ReturnType<typeof useFastWatches>['shared'][number]): ReactElement {
     return (
         <div key={fw.id} className="counter-item">
             <FastWatch

@@ -17,9 +17,17 @@ export function Item(
     setHistoryTarget: (target: HistoryTarget | null) => void,
     user: User
 ): ReactElement {
-    function onShare(email: string) { counters.share(c.id, email); currentlySharing.set(null); }
-    function onUnshare(email: string) { counters.unshare(c.id, email); currentlySharing.set(null); }
-    function onClose() { currentlySharing.set(null); }
+    function onShare(email: string) {
+        counters.share(c.id, email);
+        currentlySharing.set(null);
+    }
+    function onUnshare(email: string) {
+        counters.unshare(c.id, email);
+        currentlySharing.set(null);
+    }
+    function onClose() {
+        currentlySharing.set(null);
+    }
     return (
         <div key={c.id} className="counter-item">
             <Counter.Counter
@@ -37,7 +45,14 @@ export function Item(
                     })
                 }
             />
-            {_ShareModal(c.id, c.sharedWith ?? [], currentlySharing.get(), onShare, onUnshare, onClose)}
+            {_ShareModal(
+                c.id,
+                c.sharedWith ?? [],
+                currentlySharing.get(),
+                onShare,
+                onUnshare,
+                onClose
+            )}
         </div>
     );
 }
