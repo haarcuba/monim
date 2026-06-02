@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Timestamp } from 'firebase/firestore';
-import { TrashIcon, ShareIcon } from '@/Icons';
+import * as CommonButtons from '@/CommonButtons';
 
 export interface Props {
     id: string;
@@ -157,26 +157,7 @@ function _Actions(
 ) {
     return (
         <div className="fastwatch-actions">
-            {isOwner && (
-                <>
-                    <button
-                        data-testid="share-button"
-                        className="btn-ghost btn-icon"
-                        aria-label="Sharing options"
-                        onClick={onShare}
-                    >
-                        <ShareIcon />
-                    </button>
-                    <button
-                        data-testid="delete-button"
-                        className="btn-danger btn-icon"
-                        aria-label="Delete"
-                        onClick={onDelete}
-                    >
-                        <TrashIcon />
-                    </button>
-                </>
-            )}
+            {isOwner && CommonButtons.ShareDelete(onShare, onDelete)}
             {sharedBy && (
                 <small data-testid="shared-by" className="shared-by">
                     {sharedBy}
