@@ -7,6 +7,21 @@ function makeStartedAt(secondsAgo: number): Timestamp {
     return Timestamp.fromMillis(Date.now() - secondsAgo * 1000);
 }
 
+const confirmMethods = [
+    {
+        label: 'Enter key',
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.keyDown(input, { key: 'Enter' });
+        },
+    },
+    {
+        label: 'blur',
+        confirm: (input: HTMLElement) => {
+            reactTesting.fireEvent.blur(input);
+        },
+    },
+];
+
 describe('FastWatch running state', () => {
     beforeEach(() => {
         vi.useFakeTimers();
@@ -81,7 +96,7 @@ describe('FastWatch controls', () => {
         expect(onDelete).toHaveBeenCalledOnce();
     });
 
-    it('calls onSetTarget with seconds when target is updated via input (Enter)', () => {
+    it.each(confirmMethods)('calls onSetTarget with seconds when target is updated via input ($label)', ({ confirm }) => {
         const onSetTarget = vi.fn();
         reactTesting.render(
             <FastWatch
@@ -94,26 +109,9 @@ describe('FastWatch controls', () => {
         reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
         const input = reactTesting.screen.getByTestId('set-target-input');
         reactTesting.fireEvent.change(input, { target: { value: '18' } });
-        reactTesting.fireEvent.keyDown(input, { key: 'Enter' });
+        confirm(input);
         expect(onSetTarget).toHaveBeenCalledOnce();
         expect(onSetTarget).toHaveBeenCalledWith(18 * 3600);
-    });
-
-    it('calls onSetTarget with seconds when target is updated via input (blur)', () => {
-        const onSetTarget = vi.fn();
-        reactTesting.render(
-            <FastWatch
-                id="fw1"
-                targetSeconds={57600}
-                startedAt={makeStartedAt(0)}
-                onSetTarget={onSetTarget}
-            />
-        );
-        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
-        const input = reactTesting.screen.getByTestId('set-target-input');
-        reactTesting.fireEvent.change(input, { target: { value: '20' } });
-        reactTesting.fireEvent.blur(input);
-        expect(onSetTarget).toHaveBeenCalledWith(20 * 3600);
     });
 });
 
