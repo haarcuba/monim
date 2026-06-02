@@ -170,3 +170,54 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         expect(reactTesting.screen.queryByTestId('set-target-button')).not.toBeInTheDocument();
     });
 });
+
+describe('FastWatch name', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it.each([
+        { label: 'owner', isOwner: true },
+        { label: 'viewer', isOwner: false, sharedBy: 'owner@example.com' },
+    ])('displays the name ($label)', ({ isOwner, sharedBy }) => {
+        reactTesting.render(
+            <FastWatch
+                id="fw1"
+                name="My Fast"
+                targetSeconds={57600}
+                startedAt={makeStartedAt(0)}
+                isOwner={isOwner}
+                sharedBy={sharedBy}
+            />
+        );
+        expect(reactTesting.screen.getByText('My Fast')).toBeInTheDocument();
+    });
+
+    it.each(confirmMethods)(
+        'calls onRename when name is committed ($label)',
+        async ({ confirm }) => {
+            const onRename = vi.fn();
+            reactTesting.render(
+                <FastWatch
+                    id="fw1"
+                    name="My Fast"
+                    targetSeconds={57600}
+                    startedAt={makeStartedAt(0)}
+                    onRename={onRename}
+                />
+            );
+            reactTesting.fireEvent.click(reactTesting.screen.getByText('My Fast'));
+            const input = reactTesting.screen.getByTestId('name-input');
+            reactTesting.fireEvent.change(input, { target: { value: 'New Name' } });
+            confirm(input);
+            await reactTesting.act(async () => {
+                vi.runAllTimers();
+            });
+            expect(onRename).toHaveBeenCalledOnce();
+            expect(onRename).toHaveBeenCalledWith('New Name');
+        }
+    );
+});
