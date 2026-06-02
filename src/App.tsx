@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
 import './App.css';
 import type { User } from 'firebase/auth';
 import * as Counter from '@/Counter';
@@ -82,46 +82,45 @@ function _TabBar(activeTab: Tab, setActiveTab: (tab: Tab) => void) {
     );
 }
 
+function _Tab<T extends { id: string }>(
+    own: T[],
+    shared: T[],
+    renderOwnItem: (item: T) => ReactElement,
+    renderSharedItem: (item: T) => ReactElement,
+    addLabel: string,
+    onCreate: () => void
+) {
+    return (
+        <>
+            <section id="center">
+                {own.map(renderOwnItem)}
+                <button className="add-counter-btn" onClick={onCreate}>
+                    {addLabel}
+                </button>
+            </section>
+            {shared.length > 0 && (
+                <section id="shared">
+                    <p className="shared-section-label">Shared with you</p>
+                    {shared.map(renderSharedItem)}
+                </section>
+            )}
+        </>
+    );
+}
+
 function _CountersTab(
     counters: ReturnType<typeof useCounters>,
     currentlySharing: { get: () => string | null; set: (id: string | null) => void },
     setHistoryTarget: (target: HistoryTarget | null) => void,
     user: User
 ) {
-    return (
-        <>
-            <section id="center">
-                {counters.own.map((c) =>
-                    _CounterItem(c, counters, currentlySharing, setHistoryTarget, user)
-                )}
-                <button className="add-counter-btn" onClick={counters.create}>
-                    + counter
-                </button>
-            </section>
-            {counters.shared.length > 0 && (
-                <section id="shared">
-                    <p className="shared-section-label">Shared with you</p>
-                    {counters.shared.map((c) => (
-                        <div key={c.id} className="counter-item">
-                            <Counter.Counter
-                                id={c.id}
-                                name={c.name}
-                                count={c.count}
-                                isOwner={false}
-                                sharedBy={c.ownerEmail}
-                                onViewHistory={() =>
-                                    setHistoryTarget({
-                                        counterId: c.id,
-                                        ownerUid: c.ownerUid!,
-                                        counterName: c.name,
-                                    })
-                                }
-                            />
-                        </div>
-                    ))}
-                </section>
-            )}
-        </>
+    return _Tab(
+        counters.own,
+        counters.shared,
+        (c) => _CounterItem(c, counters, currentlySharing, setHistoryTarget, user),
+        (c) => _SharedCounterItem(c, setHistoryTarget),
+        '+ counter',
+        counters.create
     );
 }
 
@@ -130,34 +129,13 @@ function _FastWatchesTab(
     currentlySharingFwId: string | null,
     setCurrentlySharingFw: (id: string | null) => void
 ) {
-    return (
-        <>
-            <section id="center">
-                {fastwatches.own.map((fw) =>
-                    _FastWatchItem(fw, fastwatches, currentlySharingFwId, setCurrentlySharingFw)
-                )}
-                <button className="add-counter-btn" onClick={fastwatches.create}>
-                    + fastwatch
-                </button>
-            </section>
-            {fastwatches.shared.length > 0 && (
-                <section id="shared">
-                    <p className="shared-section-label">Shared with you</p>
-                    {fastwatches.shared.map((fw) => (
-                        <div key={fw.id} className="counter-item">
-                            <FastWatch
-                                id={fw.id}
-                                targetSeconds={fw.targetSeconds}
-                                elapsedSeconds={fw.elapsedSeconds}
-                                startedAt={fw.startedAt}
-                                isOwner={false}
-                                sharedBy={fw.ownerEmail}
-                            />
-                        </div>
-                    ))}
-                </section>
-            )}
-        </>
+    return _Tab(
+        fastwatches.own,
+        fastwatches.shared,
+        (fw) => _FastWatchItem(fw, fastwatches, currentlySharingFwId, setCurrentlySharingFw),
+        (fw) => _SharedFastWatchItem(fw),
+        '+ fastwatch',
+        fastwatches.create
     );
 }
 
@@ -263,6 +241,45 @@ function _FastWatchShareModal(
             }}
             onClose={() => setCurrentlySharingFw(null)}
         />
+    );
+}
+
+function _SharedCounterItem(
+    c: ReturnType<typeof useCounters>['shared'][number],
+    setHistoryTarget: (target: HistoryTarget | null) => void
+) {
+    return (
+        <div key={c.id} className="counter-item">
+            <Counter.Counter
+                id={c.id}
+                name={c.name}
+                count={c.count}
+                isOwner={false}
+                sharedBy={c.ownerEmail}
+                onViewHistory={() =>
+                    setHistoryTarget({
+                        counterId: c.id,
+                        ownerUid: c.ownerUid!,
+                        counterName: c.name,
+                    })
+                }
+            />
+        </div>
+    );
+}
+
+function _SharedFastWatchItem(fw: ReturnType<typeof useFastWatches>['shared'][number]) {
+    return (
+        <div key={fw.id} className="counter-item">
+            <FastWatch
+                id={fw.id}
+                targetSeconds={fw.targetSeconds}
+                elapsedSeconds={fw.elapsedSeconds}
+                startedAt={fw.startedAt}
+                isOwner={false}
+                sharedBy={fw.ownerEmail}
+            />
+        </div>
     );
 }
 
