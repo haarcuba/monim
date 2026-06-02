@@ -32,7 +32,7 @@ describe('FastWatch running state', () => {
 
     it('elapsed ticks up each second while running', async () => {
         const startedAt = makeStartedAt(5);
-        reactTesting.render(<FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />);
+        reactTesting.render(<FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />);
         const before = reactTesting.screen.getByTestId('elapsed-display').textContent;
 
         await reactTesting.act(async () => {
@@ -46,7 +46,7 @@ describe('FastWatch running state', () => {
     it('has orange color class before target reached', () => {
         const startedAt = makeStartedAt(10);
         const { container } = reactTesting.render(
-            <FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
         );
         expect(container.firstChild).toHaveClass('fastwatch-card');
         expect(container.firstChild).not.toHaveClass('fastwatch-reached');
@@ -55,7 +55,7 @@ describe('FastWatch running state', () => {
     it('has green color class after target reached', async () => {
         const startedAt = makeStartedAt(57599);
         const { container } = reactTesting.render(
-            <FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
         );
         expect(container.firstChild).not.toHaveClass('fastwatch-reached');
 
@@ -73,6 +73,7 @@ describe('FastWatch controls', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(3600)}
                 onReset={onReset}
@@ -87,6 +88,7 @@ describe('FastWatch controls', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 onDelete={onDelete}
@@ -101,6 +103,7 @@ describe('FastWatch controls', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 onSetTarget={onSetTarget}
@@ -120,6 +123,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -134,6 +138,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -147,6 +152,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(3600)}
                 isOwner={false}
@@ -161,6 +167,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
+                name="Test Fast"
                 targetSeconds={57600}
                 startedAt={makeStartedAt(0)}
                 isOwner={false}
@@ -205,7 +212,7 @@ describe('FastWatch name', () => {
                     id="fw1"
                     name="My Fast"
                     targetSeconds={57600}
-                    startedAt={makeStartedAt(0)}
+                    startedAt={null}
                     onRename={onRename}
                 />
             );
