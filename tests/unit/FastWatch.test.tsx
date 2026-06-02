@@ -32,7 +32,9 @@ describe('FastWatch running state', () => {
 
     it('elapsed ticks up each second while running', async () => {
         const startedAt = makeStartedAt(5);
-        reactTesting.render(<FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />);
+        reactTesting.render(
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
+        );
         const before = reactTesting.screen.getByTestId('elapsed-display').textContent;
 
         await reactTesting.act(async () => {
@@ -98,24 +100,27 @@ describe('FastWatch controls', () => {
         expect(onDelete).toHaveBeenCalledOnce();
     });
 
-    it.each(confirmMethods)('calls onSetTarget with seconds when target is updated via input ($label)', ({ confirm }) => {
-        const onSetTarget = vi.fn();
-        reactTesting.render(
-            <FastWatch
-                id="fw1"
-                name="Test Fast"
-                targetSeconds={57600}
-                startedAt={makeStartedAt(0)}
-                onSetTarget={onSetTarget}
-            />
-        );
-        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
-        const input = reactTesting.screen.getByTestId('set-target-input');
-        reactTesting.fireEvent.change(input, { target: { value: '18' } });
-        confirm(input);
-        expect(onSetTarget).toHaveBeenCalledOnce();
-        expect(onSetTarget).toHaveBeenCalledWith(18 * 3600);
-    });
+    it.each(confirmMethods)(
+        'calls onSetTarget with seconds when target is updated via input ($label)',
+        ({ confirm }) => {
+            const onSetTarget = vi.fn();
+            reactTesting.render(
+                <FastWatch
+                    id="fw1"
+                    name="Test Fast"
+                    targetSeconds={57600}
+                    startedAt={makeStartedAt(0)}
+                    onSetTarget={onSetTarget}
+                />
+            );
+            reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-target-button'));
+            const input = reactTesting.screen.getByTestId('set-target-input');
+            reactTesting.fireEvent.change(input, { target: { value: '18' } });
+            confirm(input);
+            expect(onSetTarget).toHaveBeenCalledOnce();
+            expect(onSetTarget).toHaveBeenCalledWith(18 * 3600);
+        }
+    );
 });
 
 describe('FastWatch view-only mode (isOwner=false)', () => {
