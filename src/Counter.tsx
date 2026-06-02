@@ -1,7 +1,8 @@
 import { useDebouncedCallback } from 'use-debounce';
 import { SetButton } from '@/SetButton';
 import { EditableName } from '@/EditableName';
-import { MinusIcon, PlusIcon, ShareIcon, TrashIcon, ClockIcon } from '@/Icons';
+import { MinusIcon, PlusIcon, ClockIcon } from '@/Icons';
+import * as CommonButtons from '@/CommonButtons';
 
 export interface Changes {
     name?: string;
@@ -57,7 +58,7 @@ export function Counter({
                         {isOwner && _OwnerControls2(id, count, onChange)}
                     </div>
                     <div className="counter-actions">
-                        {isOwner && _OwnerActions(onShare, onDelete)}
+                        {isOwner && CommonButtons.ShareDelete(onShare, onDelete)}
                         {sharedBy && (
                             <small data-testid="shared-by" className="shared-by">
                                 {sharedBy}
@@ -107,29 +108,6 @@ function _OwnerControls2(id: string, count: number, onChange?: OnChange) {
                 parse={Number}
                 value={count}
             />
-        </>
-    );
-}
-
-function _OwnerActions(onShare?: () => void, onDelete?: () => void) {
-    return (
-        <>
-            <button
-                data-testid="share-button"
-                className="btn-ghost btn-icon"
-                aria-label="Sharing options"
-                onClick={onShare}
-            >
-                <ShareIcon />
-            </button>
-            <button
-                data-testid="delete-button"
-                className="btn-danger btn-icon"
-                aria-label="Delete counter"
-                onClick={onDelete}
-            >
-                <TrashIcon />
-            </button>
         </>
     );
 }
