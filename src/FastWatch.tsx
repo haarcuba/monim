@@ -65,7 +65,16 @@ export function FastWatch({
 
     return (
         <div className={`fastwatch-card${reached ? ' fastwatch-reached' : ''}`}>
-            {_TimeRow(currentElapsed, targetSeconds, isOwner, targetEditing, targetInput, setTargetInput, setTargetEditing, commitTarget)}
+            {_TimeRow(
+                currentElapsed,
+                targetSeconds,
+                isOwner,
+                targetEditing,
+                targetInput,
+                setTargetInput,
+                setTargetEditing,
+                commitTarget
+            )}
             {isOwner && _Controls(running, elapsedSeconds, onStart, onStop, onReset)}
             {_Actions(isOwner, onShare, onDelete, sharedBy)}
         </div>
