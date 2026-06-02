@@ -17,9 +17,7 @@ describe('FastWatch running state', () => {
 
     it('elapsed ticks up each second while running', async () => {
         const startedAt = makeStartedAt(5);
-        reactTesting.render(
-            <FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />
-        );
+        reactTesting.render(<FastWatch id="fw1" targetSeconds={57600} startedAt={startedAt} />);
         const before = reactTesting.screen.getByTestId('elapsed-display').textContent;
 
         await reactTesting.act(async () => {
