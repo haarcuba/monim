@@ -21,6 +21,17 @@ function App() {
 
 type Tab = 'counters' | 'fastwatches';
 
+function useHistoryBack(active: boolean, onBack: () => void) {
+    useEffect(() => {
+        if (active) history.pushState({ historyView: true }, '');
+    }, [active]);
+
+    useEffect(() => {
+        window.addEventListener('popstate', onBack);
+        return () => window.removeEventListener('popstate', onBack);
+    }, [onBack]);
+}
+
 function AppContent({ user }: { user: User }) {
     const counters = useCounters(user);
     const fastwatches = useFastWatches(user);
@@ -30,20 +41,7 @@ function AppContent({ user }: { user: User }) {
     const [historyTarget, setHistoryTarget] = useState<Counters.HistoryTarget | null>(null);
     const [currentlySharingFwId, setCurrentlySharingFw] = useState<string | null>(null);
 
-    function _backButtonWorksForHistoryView() {
-        useEffect(() => {
-            if (historyTarget !== null) {
-                history.pushState({ historyView: true }, '');
-            }
-        }, [historyTarget]);
-
-        useEffect(() => {
-            const handlePopState = () => setHistoryTarget(null);
-            window.addEventListener('popstate', handlePopState);
-            return () => window.removeEventListener('popstate', handlePopState);
-        }, []);
-    }
-    _backButtonWorksForHistoryView();
+    useHistoryBack(historyTarget !== null, () => setHistoryTarget(null));
 
     if (historyTarget) {
         return (
