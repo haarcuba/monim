@@ -42,10 +42,8 @@ function AppContent({ user }: { user: User }) {
             window.addEventListener('popstate', handlePopState);
             return () => window.removeEventListener('popstate', handlePopState);
         }, []);
-
     }
     _backButtonWorksForHistoryView();
-
 
     if (historyTarget) {
         return (
