@@ -5,6 +5,8 @@
 **FastCount** is a personal productivity web app that lets users manage two
 types of widgets: **Counters** and **FastWatches**. 
 
+Your task is to develop the FastCount web app as a frontend, TypeScript+React (use Vite as your build tool).
+
 Users sign in with Google. Each user owns their own widgets and can optionally share any widget with other users, which are identified by their email address.
 Users see their own widgets and also shared widgets update in real time or near-real-time.
 
@@ -67,7 +69,7 @@ A FastWatch is an intermittent-fasting timer. It tracks how long a fast has been
 
 | Feature | Description |
 |---|---|
-| **Create** | A "+ fastwatch" button creates a new FastWatch with a random name, a default 16-hour target (57 600 s), and a start time of now. |
+| **Create** | A "+ fastwatch" button creates a new FastWatch with a random name, a default 16-hour target, and a start time of now. |
 | **Name** | The FastWatch has an editable name (inline edit, same UX as Counter names). |
 | **Live elapsed timer** | While running, the elapsed time is displayed in `HH:MM:SS` format and ticks every second. |
 | **Target duration** | The target fasting duration is shown next to the elapsed time. The owner can edit the target by clicking the edit button and entering a value in hours. |
@@ -96,21 +98,8 @@ Both Counters and FastWatches support sharing between users.
 
 ### Security Rules
 
-Firestore security rules enforce these access controls at the database level:
+security rules enforce these access controls at the database level:
 
 - Only the **owner** can read or write their own counter/FastWatch data and history.
-- A user whose email appears in a counter's `sharedWith` list can **read** the counter and its history, but **cannot write**.
-- Users not in `sharedWith` cannot access the data at all.
-- Unauthenticated requests are always denied.
-
----
-
-## Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React (TypeScript), Vite |
-| Authentication | Firebase Authentication (Google Sign-In) |
-| Database | Cloud Firestore (real-time subscriptions via `onSnapshot`) |
-| Hosting | Firebase Hosting / GitHub Pages |
-| Testing | Vitest, React Testing Library; Firestore Emulator for integration tests |
+- A user can read a counter/FastWatch shared with them, but cannot modify it or access its history.
+- Users must be authenticated to have any access to widget data. Unauthenticated requests are always denied.
