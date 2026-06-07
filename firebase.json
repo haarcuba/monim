@@ -1,10 +1,16 @@
 {
-    "firestore": {
-        "database": "monim1",
-        "location": "nam5",
-        "rules": "firestore.rules",
-        "indexes": "firestore.indexes.json"
-    },
+    "firestore": [
+        {
+            "database": "monim1",
+            "rules": "firestore.rules",
+            "indexes": "firestore.indexes.json"
+        },
+        {
+            "database": "monim-dev",
+            "rules": "firestore.rules",
+            "indexes": "firestore.indexes.json"
+        }
+    ],
     "emulators": {
         "firestore": {
             "port": 8080
