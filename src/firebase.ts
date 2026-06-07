@@ -14,5 +14,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app, 'monim1');
+export const db = getFirestore(app, import.meta.env.VITE_FIREBASE_DATABASE_ID);
 export const googleProvider = new GoogleAuthProvider();
