@@ -27,13 +27,13 @@ function _formatDatetimeLocal(ms: number): string {
 }
 
 function _formatTime(totalSeconds: number): string {
-    const s = Math.max(0, Math.floor(totalSeconds));
-    const days = Math.floor(s / 86400);
-    const h = Math.floor((s % 86400) / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    const hms = [h, m, sec].map((n) => String(n).padStart(2, '0')).join(':');
-    return days > 0 ? `${days}d ${hms}` : hms;
+    const secondsElapsed = Math.floor(totalSeconds);
+    const days = Math.floor(secondsElapsed / 86400);
+    const hours = Math.floor((secondsElapsed % 86400) / 3600);
+    const minutes = Math.floor((secondsElapsed % 3600) / 60);
+    const seconds = secondsElapsed % 60;
+    const formattedHHMMss = [hours, minutes, seconds].map((n) => String(n).padStart(2, '0')).join(':');
+    return days > 0 ? `${days}d ${formattedHHMMss}` : formattedHHMMss;
 }
 
 export function FastWatch({
