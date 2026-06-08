@@ -28,10 +28,12 @@ function _formatDatetimeLocal(ms: number): string {
 
 function _formatTime(totalSeconds: number): string {
     const s = Math.max(0, Math.floor(totalSeconds));
-    const h = Math.floor(s / 3600);
+    const days = Math.floor(s / 86400);
+    const h = Math.floor((s % 86400) / 3600);
     const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
-    return [h, m, sec].map((n) => String(n).padStart(2, '0')).join(':');
+    const hms = [h, m, sec].map((n) => String(n).padStart(2, '0')).join(':');
+    return days > 0 ? `${days}d ${hms}` : hms;
 }
 
 export function FastWatch({
