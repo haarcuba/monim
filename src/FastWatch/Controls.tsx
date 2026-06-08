@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import { formatDatetimeLocal } from './utils';
+import { formatDatetimeLocal } from './datetime';
 
 interface Props {
     onReset?: () => void;
