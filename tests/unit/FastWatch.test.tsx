@@ -168,7 +168,7 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
         expect(reactTesting.screen.getByTestId('target-display')).toHaveTextContent('16:00:00');
     });
 
-    it('hides the set-target-button', () => {
+    it('hides the set-target-button and set-start-button', () => {
         reactTesting.render(
             <FastWatch
                 id="fw1"
@@ -180,7 +180,44 @@ describe('FastWatch view-only mode (isOwner=false)', () => {
             />
         );
         expect(reactTesting.screen.queryByTestId('set-target-button')).not.toBeInTheDocument();
+        expect(reactTesting.screen.queryByTestId('set-start-button')).not.toBeInTheDocument();
     });
+});
+
+describe('FastWatch set start time', () => {
+    it('initializes the input with the current startedAt value', () => {
+        const startMs = new Date(2026, 5, 8, 8, 0, 0).getTime();
+        const startedAt = Timestamp.fromMillis(startMs);
+        reactTesting.render(
+            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={startedAt} />
+        );
+        reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-start-button'));
+        const input = reactTesting.screen.getByTestId('set-start-input') as HTMLInputElement;
+        expect(input.value).toBe('2026-06-08T08:00');
+    });
+
+    it.each(confirmMethods)(
+        'calls onSetStart with a Timestamp when start is committed via dialog ($label)',
+        ({ confirm }) => {
+            const onSetStart = vi.fn();
+            reactTesting.render(
+                <FastWatch
+                    id="fw1"
+                    name="Test Fast"
+                    targetSeconds={57600}
+                    startedAt={makeStartedAt(0)}
+                    onSetStart={onSetStart}
+                />
+            );
+            reactTesting.fireEvent.click(reactTesting.screen.getByTestId('set-start-button'));
+            const input = reactTesting.screen.getByTestId('set-start-input');
+            reactTesting.fireEvent.change(input, { target: { value: '2026-06-08T08:00' } });
+            confirm(input);
+            expect(onSetStart).toHaveBeenCalledOnce();
+            const timestamp = onSetStart.mock.calls[0][0] as Timestamp;
+            expect(timestamp.toMillis()).toBe(new Date('2026-06-08T08:00').getTime());
+        }
+    );
 });
 
 describe('FastWatch name', () => {
