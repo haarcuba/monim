@@ -20,5 +20,10 @@ export default defineConfig([
         languageOptions: {
             globals: globals.browser,
         },
+        rules: {
+            complexity: ['error', 8],
+            'max-lines-per-function': ['error', 80],
+            'max-lines': ['error', 150],
+        },
     },
 ]);
