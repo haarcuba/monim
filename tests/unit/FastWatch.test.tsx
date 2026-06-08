@@ -72,21 +72,36 @@ describe('FastWatch running state', () => {
 describe('FastWatch elapsed time formatting', () => {
     it('shows HH:MM:SS when elapsed is under 24h', () => {
         reactTesting.render(
-            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={makeStartedAt(3600)} />
+            <FastWatch
+                id="fw1"
+                name="Test Fast"
+                targetSeconds={57600}
+                startedAt={makeStartedAt(3600)}
+            />
         );
         expect(reactTesting.screen.getByTestId('elapsed-display')).toHaveTextContent('01:00:00');
     });
 
     it('shows Xd HH:MM:SS when elapsed is 24h or more', () => {
         reactTesting.render(
-            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={makeStartedAt(25 * 3600)} />
+            <FastWatch
+                id="fw1"
+                name="Test Fast"
+                targetSeconds={57600}
+                startedAt={makeStartedAt(25 * 3600)}
+            />
         );
         expect(reactTesting.screen.getByTestId('elapsed-display')).toHaveTextContent('1d 01:00:00');
     });
 
     it('shows correct days and time for multi-day elapsed', () => {
         reactTesting.render(
-            <FastWatch id="fw1" name="Test Fast" targetSeconds={57600} startedAt={makeStartedAt(2 * 24 * 3600 + 90)} />
+            <FastWatch
+                id="fw1"
+                name="Test Fast"
+                targetSeconds={57600}
+                startedAt={makeStartedAt(2 * 24 * 3600 + 90)}
+            />
         );
         expect(reactTesting.screen.getByTestId('elapsed-display')).toHaveTextContent('2d 00:01:30');
     });
