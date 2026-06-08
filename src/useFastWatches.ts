@@ -106,6 +106,11 @@ export function useFastWatches(user: User) {
         await Firestore.updateDoc(ref, { targetSeconds: seconds });
     }
 
+    async function setStart(id: string, startedAt: Firestore.Timestamp) {
+        const ref = Firestore.doc(db, 'users', user.uid, 'fastwatches', id);
+        await Firestore.updateDoc(ref, { startedAt });
+    }
+
     async function share(id: string, email: string) {
         await Firestore.updateDoc(Firestore.doc(db, 'users', user.uid, 'fastwatches', id), {
             sharedWith: Firestore.arrayUnion(email),
@@ -140,6 +145,7 @@ export function useFastWatches(user: User) {
         reset,
         rename,
         setTarget,
+        setStart,
         share,
         unshare,
         destroy,

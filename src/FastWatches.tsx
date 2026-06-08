@@ -30,7 +30,8 @@ export function Item(
                 onReset={() => fastwatches.reset(fw.id)}
                 onDelete={() => fastwatches.destroy(fw.id)}
                 onShare={() => setCurrentlySharingFw(fw.id)}
-                onSetTarget={(s) => fastwatches.setTarget(fw.id, s)}
+                onSetTarget={(seconds) => fastwatches.setTarget(fw.id, seconds)}
+                onSetStart={(timestamp) => fastwatches.setStart(fw.id, timestamp)}
                 onRename={(name) => fastwatches.rename(fw.id, name)}
             />
             {_ShareModal(
