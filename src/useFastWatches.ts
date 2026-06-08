@@ -63,23 +63,7 @@ function _subscribeToShares(email: string, set: SetFastWatches): () => void {
     };
 }
 
-export function useFastWatches(user: User) {
-    const [ownFastWatches, setOwnFastWatches] = useState<FastWatchData[]>([]);
-    const [sharedFastWatches, setSharedFastWatches] = useState<FastWatchData[]>([]);
-
-    useEffect(() => {
-        const col = Firestore.collection(db, 'users', user.uid, 'fastwatches');
-        const q = Firestore.query(col, Firestore.orderBy('createdAt'));
-        return Firestore.onSnapshot(q, (snap) => {
-            setOwnFastWatches(snap.docs.map(_fastWatchData));
-        });
-    }, [user.uid]);
-
-    useEffect(() => {
-        if (!user.email) return;
-        return _subscribeToShares(user.email, setSharedFastWatches);
-    }, [user.uid, user.email]);
-
+function _fastWatchActions(user: User, ownFastWatches: FastWatchData[]) {
     async function create() {
         const col = Firestore.collection(db, 'users', user.uid, 'fastwatches');
         await Firestore.addDoc(col, {
@@ -138,16 +122,29 @@ export function useFastWatches(user: User) {
         await batch.commit();
     }
 
+    return { create, reset, rename, setTarget, setStart, share, unshare, destroy };
+}
+
+export function useFastWatches(user: User) {
+    const [ownFastWatches, setOwnFastWatches] = useState<FastWatchData[]>([]);
+    const [sharedFastWatches, setSharedFastWatches] = useState<FastWatchData[]>([]);
+
+    useEffect(() => {
+        const col = Firestore.collection(db, 'users', user.uid, 'fastwatches');
+        const q = Firestore.query(col, Firestore.orderBy('createdAt'));
+        return Firestore.onSnapshot(q, (snap) => {
+            setOwnFastWatches(snap.docs.map(_fastWatchData));
+        });
+    }, [user.uid]);
+
+    useEffect(() => {
+        if (!user.email) return;
+        return _subscribeToShares(user.email, setSharedFastWatches);
+    }, [user.uid, user.email]);
+
     return {
         own: ownFastWatches,
         shared: sharedFastWatches,
-        create,
-        reset,
-        rename,
-        setTarget,
-        setStart,
-        share,
-        unshare,
-        destroy,
+        ..._fastWatchActions(user, ownFastWatches),
     };
 }
